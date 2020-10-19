@@ -1,10 +1,11 @@
 public class Spell extends Card{
 
     private boolean effectiveness;
-    private String name;
-    Spell(){}
+    Spell(){
+        getName();
+    }
     Spell(String name){
-        this.name = name;
+       setName(name);
     }
 
     public void setEffectiveness(boolean effectiveness) {

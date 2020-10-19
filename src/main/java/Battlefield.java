@@ -33,7 +33,7 @@ public class Battlefield {
     }
 
     public void currWinner(){
-        if(user.getUser_status() < user.getUser_status()){
+        if(getUser().getUser_status() < getOpponent().getUser_status()){
             setWinner(opponent);
         }else{
             setWinner(user);
@@ -56,14 +56,10 @@ public class Battlefield {
             u2.setUser_status(u2.getUser_status() - 5);
         }
     }
-    //take some random MonsterBreeds
-    private MonsterBreeds randomMonster() {
-        int pick = new Random().nextInt(MonsterBreeds.values().length);
-        return MonsterBreeds.values()[pick];
-    }
-    //save those MonsterBreeds in the Deck
-    public void createDeck(User usr){
-        Monster monsterCard = new Monster(randomMonster());
-        usr.getDeck().addCardToDeck(monsterCard);
+
+    public void printWinner(){
+        System.out.println("-------------------------------------");
+        System.out.println("The winner is "+getWinner());
+        System.out.println("-------------------------------------");
     }
 }
