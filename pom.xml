@@ -30,8 +30,8 @@
                         <version>${lombok-version}</version>
                     </path>
                 </annotationProcessorPaths>
-                <source>${java.version}</source>
-                <target>${java.version}</target>
+                <source>14</source>
+                <target>14</target>
                 <release>${java.version}</release>
             </configuration>
         </plugin>
@@ -62,7 +62,4 @@
             <version>1.18.12</version>
         </dependency>
     </dependencies>
-
-
-
 </project>
