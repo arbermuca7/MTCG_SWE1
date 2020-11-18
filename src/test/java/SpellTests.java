@@ -9,8 +9,8 @@ public class SpellTests {
     @DisplayName("Water is effective against Fire")
     void testSetEffectivenessWater(){
         Spell spell_crd = new Spell();
-        Monster monster1 = new Monster();
-        Monster monster2 = new Monster();
+        Card monster1 = new Monster();
+        Card monster2 = new Monster();
         Elements elem = Elements.WATER;
         Elements elem1 = Elements.FIRE;
         monster1.setElement_type(elem);
@@ -28,7 +28,7 @@ public class SpellTests {
     @DisplayName("Fire is effective against Normal")
     void testSetEffectivenessFire(){
         Spell spell_crd = new Spell();
-        Monster monster1 = new Monster();
+        Card monster1 = new Monster();
         Monster monster2 = new Monster();
         Elements elem = Elements.NORMAL;
         Elements elem1 = Elements.FIRE;
@@ -46,8 +46,8 @@ public class SpellTests {
     @DisplayName("They aren't effecting")
     void testSetEffectiveness_NotEffecting(){
         Spell spell_crd = new Spell();
-        Monster monster1 = new Monster();
-        Monster monster2 = new Monster();
+        Card monster1 = new Monster();
+        Card monster2 = new Monster();
         Elements elem = Elements.WATER;
         Elements elem1 = Elements.WATER;
         monster1.setElement_type(elem);

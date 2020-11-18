@@ -19,7 +19,7 @@ public class DeckTests {
         ArrayList<MonsterBreeds> actual = deck.getDeck();
 
         //assert
-        assertEquals(expected, actual, "The Monstercard was successfully saved into the Deck!!");
+        assertEquals(expected, actual, "The Monster card was successfully saved into the Deck!!");
     }
     @Test
     void testDeleteCard_fromDeck(){
