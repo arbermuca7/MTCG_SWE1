@@ -3,31 +3,27 @@ import java.util.Collections;
 import java.util.ArrayList;
 
 public class Stack {
-    private ArrayList<Monster> stack;
-    private ArrayList<Monster> store;
-    private Monster cards;
+    private ArrayList<Card> stack;
+    private Card cards;
 
     Stack(){
-        stack = new ArrayList<Monster>();
+        stack = new ArrayList<Card>();
     }
 
-    public ArrayList<Monster> getStack() {
+    public ArrayList<Card> getStack() {
         return stack;
     }
 
-    public ArrayList<Monster> getStore() {
-        return store;
-    }
-
     public boolean buy_packages(){
-        ArrayList<Monster> pkg = new ArrayList<Monster>(5);
+        ArrayList<Card> pkg = new ArrayList<>(5);
         for(int j = 0; j<5; j++)
             pkg.add(j, cards);
 
-        for(int i = 0; i<pkg.size(); i++)
+        for(int i = 0; i<pkg.size(); i++){
             stack.addAll(i,pkg);
-
-        return true;
+            return true;
+        }
+        return false;
     }
 
 }

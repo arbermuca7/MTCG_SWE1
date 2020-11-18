@@ -48,7 +48,8 @@ public class User{
     }
 
     public void setUser_status(int user_status) {
-            this.user_status = user_status;
+
+        this.user_status = user_status;
     }
 
     public Deck getDeck() {
@@ -62,7 +63,7 @@ public class User{
     public void updateCoins(){
         manageStack = new Stack();
         if(manageStack.buy_packages()){
-            coins = coins - 4;
+            coins -= 4;
         }
     }
     public void scoreboard(User u1){

@@ -1,5 +1,4 @@
 
-import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -30,9 +29,9 @@ public class Deck {
     }
 
     //save those MonsterBreeds in the Deck
-    /*public void createDeck(User usr, MonsterBreeds b_breed){
+    public void createDeck(User usr, MonsterBreeds b_breed){
         Monster monsterCard = new Monster(b_breed);
         addCardToDeck(monsterCard.getBreed());
-    }*/
+    }
 
 }

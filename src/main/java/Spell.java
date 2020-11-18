@@ -1,11 +1,22 @@
 public class Spell extends Card{
 
     private boolean effectiveness;
+    private SpellBreeds breed;
     Spell(){
         getName();
     }
     Spell(String name){
        setName(name);
+    }
+
+    public SpellBreeds getBreed() {
+
+        return breed;
+    }
+
+    public void setBreed(SpellBreeds breed) {
+
+        this.breed = breed;
     }
 
     public void setEffectiveness(boolean effectiveness) {
@@ -15,7 +26,7 @@ public class Spell extends Card{
     public boolean getEffectiveness() {
         return effectiveness;
     }
-    public void attackEffective(Monster p1, Monster p2){
+    public void attackEffective(Card p1, Card p2){
         //falls water->fire true
         //falls fire->normal true
         //falls normal->water true
