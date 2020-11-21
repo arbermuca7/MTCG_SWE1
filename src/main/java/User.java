@@ -12,8 +12,6 @@ public class User{
     User(){
         username = "anonym";
         password = "123456";
-        coins = 20;
-        user_status = 100;
     }
     User(String user){
         username = user;
@@ -61,14 +59,14 @@ public class User{
     }
 
     public void updateCoins(){
-        manageStack = new Stack();
-        if(manageStack.buy_packages()){
-            coins -= 4;
-        }
+        if(manageStack == null)
+            manageStack = new Stack();
+        System.out.println("You bought a card package");
+        coins -= 4;
     }
     public void scoreboard(User u1){
         System.out.println("-------------------------------------");
-        System.out.println(u1.getUsername()+" hat "+u1.getUser_status()+" Punkte!!");
+        System.out.println(u1.getUsername()+" has "+u1.getUser_status()+" points!!");
         System.out.println("-------------------------------------");
     }
 

@@ -62,4 +62,26 @@ public class Battlefield {
         System.out.println("The winner is "+getWinner());
         System.out.println("-------------------------------------");
     }
+
+    public void monsterAgainstEachOther(Card m1, Card m2){
+        if(m1.getName().equals(MonsterBreeds.GOBLIN.getVal()) && m2.getName().equals(MonsterBreeds.DRAGON.getVal())){
+            m1.setDamage(0);
+        }
+        if(m1.getName().equals(MonsterBreeds.WIZARD.getVal()) && m2.getName().equals(MonsterBreeds.ORK.getVal())){
+            m2.setDamage(0);
+        }
+        if(m1.getName().equals(MonsterBreeds.KNIGHT.getVal()) && m2.getName().equals(SpellBreeds.SPELL_WATER.getVal())){
+            m1.setDamage(0);
+        }
+        if(m1.getName().equals(MonsterBreeds.KRAKEN.getVal()) && (m2.getName().equals(SpellBreeds.SPELL_WATER.getVal())
+                || m2.getName().equals(SpellBreeds.SPELL_FIRE.getVal()) || m2.getName().equals(SpellBreeds.SPELL_NONE.getVal()))){
+            m2.setDamage(0);
+        }
+        if(m1.getName().equals(MonsterBreeds.FIREELVES.getVal()) && m2.getName().equals(MonsterBreeds.DRAGON.getVal())){
+            int damages = m1.getDamage();
+            m1.setDamage(damages);
+        }
+    }
+
+
 }

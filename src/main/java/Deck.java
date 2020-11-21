@@ -2,36 +2,34 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Deck {
-    private ArrayList<MonsterBreeds> deck;
+public class Deck extends Stack{
+
+    private ArrayList<String> deck;
 
     Deck(){
-
-        deck = new ArrayList<MonsterBreeds>(4);
+        deck = new ArrayList<String>();
     }
 
-    public ArrayList<MonsterBreeds> getDeck() {
-
+    public ArrayList<String> getDeck() {
         return deck;
     }
 
-    public void addCardToDeck(MonsterBreeds card_monster){
-        deck.add(card_monster);
+    public void addCardToDeck(String card){
+        deck.add(card);
     }
 
-    public void deleteCard(MonsterBreeds breed){
+    public void deleteCard(String breed){
         deck.remove(breed);
-    }
-    //take some random MonsterBreeds
-    private MonsterBreeds randomMonster() {
-        int pick = new Random().nextInt(MonsterBreeds.values().length);
-        return MonsterBreeds.values()[pick];
     }
 
     //save those MonsterBreeds in the Deck
-    public void createDeck(User usr, MonsterBreeds b_breed){
-        Monster monsterCard = new Monster(b_breed);
-        addCardToDeck(monsterCard.getBreed());
+    public void createDeck(){
+        Random rand = new Random();
+        for (int i = 0; i<4 ; i++){
+            int whichMonster = rand.nextInt(getStack().size());
+            addCardToDeck(getStack().get(whichMonster));
+        }
+
     }
 
 }

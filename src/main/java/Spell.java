@@ -1,22 +1,13 @@
+import java.util.Random;
+
 public class Spell extends Card{
 
     private boolean effectiveness;
-    private SpellBreeds breed;
-    Spell(){
-        getName();
-    }
+
+    Spell(){}
     Spell(String name){
-       setName(name);
-    }
 
-    public SpellBreeds getBreed() {
-
-        return breed;
-    }
-
-    public void setBreed(SpellBreeds breed) {
-
-        this.breed = breed;
+        setName(name);
     }
 
     public void setEffectiveness(boolean effectiveness) {
@@ -26,10 +17,13 @@ public class Spell extends Card{
     public boolean getEffectiveness() {
         return effectiveness;
     }
-    public void attackEffective(Card p1, Card p2){
+
+    public void attackEffectiveness(Card p1, Card p2){
         //falls water->fire true
         //falls fire->normal true
         //falls normal->water true
+        //and vise versa also
+
         if(p1.getElement_type() == Elements.WATER && p2.getElement_type() == Elements.FIRE){
             setEffectiveness(true);
         }
@@ -47,9 +41,43 @@ public class Spell extends Card{
         }
         else if(p2.getElement_type() == Elements.NORMAL && p1.getElement_type() == Elements.WATER){
             setEffectiveness(true);
-        }
-        else{
+        }else {
             setEffectiveness(false);
+        }
+    }
+    public void damageCalculate(Card c1, Card c2){
+        if (getEffectiveness()){
+            if (c1.getElement_type() == Elements.WATER){
+                if (c2.getElement_type() == Elements.FIRE){
+                    c1.setDamage(c1.getDamage()*2);
+                }
+                else if (c2.getElement_type() == Elements.NORMAL){
+                    c1.setDamage(c1.getDamage()/2);
+                }
+            }
+            else if (c1.getElement_type() == Elements.FIRE){
+                if (c2.getElement_type() == Elements.WATER){
+                    c1.setDamage(c1.getDamage()/2);
+                }
+                else if (c2.getElement_type() == Elements.NORMAL){
+                    c1.setDamage(c1.getDamage()*2);
+                }
+            }
+            else if (c1.getElement_type() == Elements.NORMAL){
+                if (c2.getElement_type() == Elements.WATER){
+                    c1.setDamage(c1.getDamage()*2);
+                }
+                else if (c2.getElement_type() == Elements.FIRE){
+                    c1.setDamage(c1.getDamage()/2);
+                }
+            }
+        }else{
+            //compare between damage value
+            if (c1.getDamage() > c2.getDamage()){
+                //card c1 goes to the user 1
+            }else{
+                //card c2 goes to the user 2
+            }
         }
 
     }
