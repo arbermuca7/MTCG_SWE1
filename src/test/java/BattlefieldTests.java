@@ -2,6 +2,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
+
+import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BattlefieldTests {
@@ -11,6 +13,7 @@ public class BattlefieldTests {
         Battlefield battle = new Battlefield();
         User user1 = new User("Norbert");
         User user2 = new User("Michael");
+
         battle.setUser(user1);
         battle.setOpponent(user2);
         battle.setWinner(user1);
@@ -28,6 +31,7 @@ public class BattlefieldTests {
         Battlefield battle = new Battlefield();
         User user1 = new User("Norbert");
         User user2 = new User("Michael");
+
         battle.setUser(user1);
         battle.setOpponent(user2);
         battle.setWinner(user1);
@@ -58,4 +62,18 @@ public class BattlefieldTests {
         //assert
         assertEquals(expected, actual, "Michael is the Winner!!");
     }
+    @Test
+    @DisplayName("Test the Monsters against each other")
+    void testMonstersAgainstEachOther(){
+        Card crd = new Monster("GOBLIN");
+        Card crd1 = new Monster("DRAGON");
+        Battlefield battle = new Battlefield();
+
+        int expectedDamage = 0;
+        battle.monsterAgainstEachOther(crd,crd1);
+        int actualDamage = crd.getDamage();
+        //assert
+        assertEquals(actualDamage, expectedDamage, "The Damages should be overwritten to 0 !!");
+    }
+
 }

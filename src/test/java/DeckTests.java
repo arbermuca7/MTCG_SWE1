@@ -7,31 +7,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DeckTests {
     @Test
     void testAddCardToDeck(){
-        Monster monster_type = new Monster();
+        Monster monster_type = new Monster("GOBLIN");
         Deck deck = new Deck();
+        String expected_mst = MonsterBreeds.GOBLIN.getVal();
+        ArrayList<String> expected = new ArrayList<>();
 
-        MonsterBreeds expected_mst = MonsterBreeds.GOBLIN;
-        ArrayList<MonsterBreeds> expected = new ArrayList<>();
         expected.add(expected_mst);
-
-        monster_type.setBreed(MonsterBreeds.GOBLIN);
-        deck.addCardToDeck(monster_type.getBreed());
-        ArrayList<MonsterBreeds> actual = deck.getDeck();
+        deck.addCardToDeck(monster_type.getName());
+        ArrayList<String> actual = deck.getDeck();
 
         //assert
         assertEquals(expected, actual, "The Monster card was successfully saved into the Deck!!");
     }
     @Test
     void testDeleteCard_fromDeck(){
-        Monster monster_type = new Monster();
+        Monster monster_type = new Monster("GOBLIN");
         Deck deck = new Deck();
 
-        ArrayList<MonsterBreeds> expected = new ArrayList<>();
+        ArrayList<String> expected = new ArrayList<>();
 
-        monster_type.setBreed(MonsterBreeds.GOBLIN);
-        deck.addCardToDeck(monster_type.getBreed());
-        deck.deleteCard(monster_type.getBreed());
-        ArrayList<MonsterBreeds> actual = deck.getDeck();
+        deck.addCardToDeck(monster_type.getName());
+        deck.deleteCard(monster_type.getName());
+
+        ArrayList<String> actual = deck.getDeck();
 
         //assert
         assertEquals(expected, actual, "The card was deleted successfully from the deck!!");

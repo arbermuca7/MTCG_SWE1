@@ -4,16 +4,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MonsterTests {
 
     @Test
-    void testGetBreed(){
-        Monster monster_crd = new Monster();
-        MonsterBreeds monster_type = MonsterBreeds.GOBLIN;
+    void testSetName(){
+        Card crd = new Monster("GOBLIN");
 
-        monster_crd.setBreed(monster_type);
-        MonsterBreeds actual = monster_crd.getBreed();
+        String expectedName = "GOBLIN";
+        String actualName = crd.getName();
 
         //assert
-        assertEquals(actual, monster_type, "The Monster should be Goblin");
+        assertEquals(actualName, expectedName, "The Monster should be Goblin");
     }
+    @Test
+    void testSetDamage(){
+        Card crd = new Monster("GOBLIN");
+        Card crd1 = new Monster("DRAGON");
 
+        int expectedDamage = 101;
+        crd.setDamage(101);
+        int actualDamage = crd.getDamage();
+
+        //assert
+        assertEquals(actualDamage, expectedDamage, "The Damages should be 101!!!");
+    }
+    @Test
+    void testSetElementType(){
+        Card crd = new Monster("GOBLIN");
+
+        Elements expectedElement = Elements.WATER;
+        crd.setElement_type(Elements.WATER);
+        Elements actualElement = crd.getElement_type();
+
+        //assert
+        assertEquals(actualElement, expectedElement, "The Element should be water!!!");
+    }
 
 }
