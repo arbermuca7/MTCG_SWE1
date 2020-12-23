@@ -39,7 +39,7 @@ public class Battlefield {
             setWinner(user);
         }
     }
-
+    //is it for one round or for a game??????
     public void elo_points(User u1, User u2) {
         u1 = getUser();
         u2 = getOpponent();
@@ -59,7 +59,7 @@ public class Battlefield {
 
     public void printWinner(){
         System.out.println("-------------------------------------");
-        System.out.println("The winner is "+getWinner());
+        System.out.println("The winner is " + getWinner());
         System.out.println("-------------------------------------");
     }
 
@@ -82,6 +82,9 @@ public class Battlefield {
             m1.setDamage(damages);
         }
     }
+    //finde which card is from which type
 
+
+    //play Method
 
 }

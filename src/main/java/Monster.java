@@ -9,4 +9,7 @@ public class Monster extends Card {
         setName(name);
     }
 
+    //methode getDamage
+    //
+
 }

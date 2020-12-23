@@ -1,11 +1,14 @@
+import java.util.List;
+
 public class User{
     private String username;
     private String password;
     private int coins = 20;
     private int playedGames;
+    //wie viele Rounds gespielt.
+    private List<Battlefield> rounds;
     private int user_status = 100;
     private Deck deck;
-    private Card user_card;
     private Battlefield battle;
     private Stack manageStack;
 
@@ -54,14 +57,8 @@ public class User{
         return deck;
     }
 
-    public Card getUser_card() {
-        return user_card;
-    }
-
     public void updateCoins(){
-        if(manageStack == null)
-            manageStack = new Stack();
-        System.out.println("You bought a card package");
+        System.out.println("****** You bought a card package!!!! ******");
         coins -= 4;
     }
     public void scoreboard(User u1){
@@ -70,4 +67,11 @@ public class User{
         System.out.println("-------------------------------------");
     }
 
+    public int getPlayedGames() {
+        return playedGames;
+    }
+
+    public void setPlayedGames(int playedGames) {
+        this.playedGames = playedGames;
+    }
 }

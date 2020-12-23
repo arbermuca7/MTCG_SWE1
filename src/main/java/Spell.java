@@ -17,7 +17,7 @@ public class Spell extends Card{
     public boolean getEffectiveness() {
         return effectiveness;
     }
-
+    //in SpellBreeds...
     public void attackEffectiveness(Card p1, Card p2){
         //falls water->fire true
         //falls fire->normal true
@@ -71,12 +71,15 @@ public class Spell extends Card{
                     c1.setDamage(c1.getDamage()/2);
                 }
             }
+            //?????
         }else{
             //compare between damage value
             if (c1.getDamage() > c2.getDamage()){
-                //card c1 goes to the user 1
+                //card c2 goes to the user 1
+
             }else{
-                //card c2 goes to the user 2
+                //card c1 goes to the user 2
+
             }
         }
 

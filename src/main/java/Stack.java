@@ -46,6 +46,8 @@ public class Stack{
             }
             //add all cards from the package to the stack
             stack.addAll(pkg);
+            //update the coins subtracting 4 coins, when you buy a package of cards
+            usr.updateCoins();
         }
     }
 
