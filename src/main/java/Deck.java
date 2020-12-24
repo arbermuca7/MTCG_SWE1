@@ -4,25 +4,29 @@ import java.util.Random;
 
 public class Deck extends Stack{
 
-    private ArrayList<String> deck;
+    private ArrayList<Card> deck;
 
     Deck(){
-        deck = new ArrayList<String>();
+        deck = new ArrayList<>();
     }
 
-    public ArrayList<String> getDeck() {
+    public ArrayList<Card> getDeck() {
         return deck;
     }
 
-    public void addCardToDeck(String card){
+    public void addCardToDeck(Card card){
         deck.add(card);
     }
 
-    public void deleteCard(String breed){
-        deck.remove(breed);
+    //take a card from the deck if you loose the round
+    public Card drawCardFromDeck(){
+        Card card = deck.get(0);
+        deck.remove(0);
+        return card;
     }
-
+    /*
     //save those MonsterBreeds in the Deck
+    //in class battlefield???
     public void createDeck(){
         Random rand = new Random();
         for (int i = 0; i<4 ; i++){
@@ -30,6 +34,6 @@ public class Deck extends Stack{
             addCardToDeck(getStack().get(whichMonster));
         }
 
-    }
+    }*/
 
 }

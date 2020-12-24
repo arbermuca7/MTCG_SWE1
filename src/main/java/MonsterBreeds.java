@@ -33,5 +33,4 @@ public enum MonsterBreeds {
         }
         return val.get(number);
     }
-    //die den Damage wert modifizieren
 }
