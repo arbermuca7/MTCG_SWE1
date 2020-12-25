@@ -6,7 +6,6 @@ public class Battlefield {
     private User user;
     private User opponent;
     private User winner;
-
     private User roundWinner;
 
     private int playedGames;
@@ -14,6 +13,7 @@ public class Battlefield {
     private boolean pureMonster;
 
     Battlefield(){}
+
     public User getUser(){
         return user;
     }
@@ -24,7 +24,6 @@ public class Battlefield {
     public User getOpponent() {
         return opponent;
     }
-
     public void setOpponent(User opponent) {
         this.opponent = opponent;
     }
@@ -32,7 +31,6 @@ public class Battlefield {
     public User getWinner() {
         return winner;
     }
-
     public void setWinner(User winner) {
         this.winner = winner;
     }
@@ -40,14 +38,13 @@ public class Battlefield {
     public void setRoundWinner(User win){
         this.roundWinner = win;
     }
-
     public User getRoundWinner() {
         return roundWinner;
     }
+
     public int getPlayedGames() {
         return playedGames;
     }
-
     public void setPlayedGames(int playedGames) {
         this.playedGames = playedGames;
     }
@@ -55,7 +52,6 @@ public class Battlefield {
     public boolean getPureMonsters(){
         return pureMonster;
     }
-
     public void setPureMonster(boolean answer){
         this.pureMonster = answer;
     }
