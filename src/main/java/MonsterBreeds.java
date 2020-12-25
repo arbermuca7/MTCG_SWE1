@@ -11,7 +11,9 @@ public enum MonsterBreeds {
     FIREELVES("FIREELVES");
 
     String monster;
+
     private static List<String> val;
+
     MonsterBreeds(String monster){
         this.monster = monster;
     }

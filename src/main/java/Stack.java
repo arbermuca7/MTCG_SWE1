@@ -65,16 +65,16 @@ public class Stack{
                     int damageSpell = randSpell.nextInt(1951)+50;
 
                     if (SpellBreeds.getSpell(whichSpell).equals(SpellBreeds.SPELL_FIRE.getVal())){
-                        Card monster = new Monster(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.FIRE);
-                        pkg.add(monster);
+                        Card spell = new Spell(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.FIRE);
+                        pkg.add(spell);
                     }
                     else if (SpellBreeds.getSpell(whichSpell).equals(SpellBreeds.SPELL_NONE.getVal())){
-                        Card monster = new Monster(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.NORMAL);
-                        pkg.add(monster);
+                        Card spell = new Spell(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.NORMAL);
+                        pkg.add(spell);
                     }
                     else if (SpellBreeds.getSpell(whichSpell).equals(SpellBreeds.SPELL_WATER.getVal())){
-                        Card monster = new Monster(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.WATER);
-                        pkg.add(monster);
+                        Card spell = new Spell(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.WATER);
+                        pkg.add(spell);
                     }
                 }
             }
