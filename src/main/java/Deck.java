@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Deck extends Stack{
 
@@ -24,16 +23,13 @@ public class Deck extends Stack{
         deck.remove(0);
         return card;
     }
-    /*
-    //save those MonsterBreeds in the Deck
-    //in class battlefield???
-    public void createDeck(){
-        Random rand = new Random();
-        for (int i = 0; i<4 ; i++){
-            int whichMonster = rand.nextInt(getStack().size());
-            addCardToDeck(getStack().get(whichMonster));
-        }
-
-    }*/
+    //take the card to fight against your opponent
+    public Card pickCardFromDeck(int pos){
+        Card card = deck.get(pos);
+        return card;
+    }
+    public int deckSize(){
+        return deck.size();
+    }
 
 }
