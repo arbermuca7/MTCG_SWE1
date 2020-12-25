@@ -10,16 +10,21 @@ public class User{
     User(){
         username = "anonym";
         password = "123456";
+        deck = new Deck();
+        stack = new Stack();
     }
 
     User(String user){
-
         username = user;
+        deck = new Deck();
+        stack = new Stack();
     }
 
     User(String user, String pwd){
         username = user;
         password = pwd;
+        deck = new Deck();
+        stack = new Stack();
     }
 
     public String getUsername() {
@@ -60,12 +65,12 @@ public class User{
 
     public void updateCoins(){
         System.out.println("****** You bought a card package!!!! ******");
-        coins -= 4;
+        coins -= 5;
     }
     public void scoreboard(){
-        System.out.println("-------------------------------------");
+        System.out.println("------------------------------------------------------------");
         System.out.println("-->" + getUsername() + " has " + getUser_status()+" points!!");
-        System.out.println("-------------------------------------");
+        System.out.println("------------------------------------------------------------");
     }
 
 }
