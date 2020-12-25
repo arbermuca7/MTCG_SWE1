@@ -1,4 +1,3 @@
-import java.util.Random;
 
 public class Spell extends Card{
     private boolean effectiveness;

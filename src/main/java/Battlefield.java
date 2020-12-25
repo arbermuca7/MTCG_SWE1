@@ -1,19 +1,15 @@
-
 import java.util.Random;
 
 public class Battlefield {
-
     private User user;
     private User opponent;
     private User winner;
     private User roundWinner;
 
     private int playedGames;
-
     private boolean pureMonster;
 
     Battlefield(){}
-
     public User getUser(){
         return user;
     }
@@ -88,7 +84,6 @@ public class Battlefield {
         System.out.println("--> The winner is " + getRoundWinner());
         System.out.println("-------------------------------------");
     }
-
     //save those MonsterBreeds in the Deck
     public void createDeck(User user){
         Random rand = new Random();
@@ -148,7 +143,6 @@ public class Battlefield {
             setPureMonster(false);
         }
     }
-
     //compare damages knowing if there are two pure monsters fighting or not?
     public void compareDamage(Card c1, Card c2){
         //save the default value first here then when the round ends, set it as it was.
@@ -224,6 +218,7 @@ public class Battlefield {
         //calculate the elo points for the Fighter
         elo_points(player, againster);
         battleLog(player, againster);
+
     }
     public void battleLog(User player, User againster){
         //a detailed Log about the individual matches
