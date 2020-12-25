@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.Random;
 
 public class Battlefield {
@@ -7,6 +6,12 @@ public class Battlefield {
     private User user;
     private User opponent;
     private User winner;
+
+    private User roundWinner;
+
+    private int playedGames;
+
+    private boolean pureMonster;
 
     Battlefield(){}
     public User getUser(){
@@ -32,6 +37,29 @@ public class Battlefield {
         this.winner = winner;
     }
 
+    public void setRoundWinner(User win){
+        this.roundWinner = win;
+    }
+
+    public User getRoundWinner() {
+        return roundWinner;
+    }
+    public int getPlayedGames() {
+        return playedGames;
+    }
+
+    public void setPlayedGames(int playedGames) {
+        this.playedGames = playedGames;
+    }
+
+    public boolean getPureMonsters(){
+        return pureMonster;
+    }
+
+    public void setPureMonster(boolean answer){
+        this.pureMonster = answer;
+    }
+
     public void currWinner(){
         if(getUser().getUser_status() < getOpponent().getUser_status()){
             setWinner(opponent);
@@ -39,10 +67,11 @@ public class Battlefield {
             setWinner(user);
         }
     }
-    //is it for one round or for a game??????
-    public void elo_points(User u1, User u2) {
-        u1 = getUser();
-        u2 = getOpponent();
+    public void elo_points(User usr1, User usr2) {
+        setUser(usr1);
+        User u1 = getUser();
+        setOpponent(usr2);
+        User u2 = getOpponent();
         User win = getWinner();
         if (u1 == win) {
             u1.setUser_status(u1.getUser_status() + 3);
@@ -57,34 +86,165 @@ public class Battlefield {
         }
     }
 
-    public void printWinner(){
+    public void printRoundWinner(){
         System.out.println("-------------------------------------");
-        System.out.println("The winner is " + getWinner());
+        System.out.println("--> Round: " + getPlayedGames());
+        System.out.println("--> The winner is " + getRoundWinner());
         System.out.println("-------------------------------------");
+    }
+
+    //save those MonsterBreeds in the Deck
+    public void createDeck(User user){
+        Random rand = new Random();
+        for (int i = 0; i<4 ; i++){
+            int whichMonster = rand.nextInt(user.getStack().stackSize());
+            user.getDeck().addCardToDeck(user.getStack().pickCardFromStack(whichMonster));
+        }
+
     }
 
     public void monsterAgainstEachOther(Card m1, Card m2){
         if(m1.getName().equals(MonsterBreeds.GOBLIN.getVal()) && m2.getName().equals(MonsterBreeds.DRAGON.getVal())){
             m1.setDamage(0);
+            setPureMonster(true);
         }
-        if(m1.getName().equals(MonsterBreeds.WIZARD.getVal()) && m2.getName().equals(MonsterBreeds.ORK.getVal())){
+        else if(m1.getName().equals(MonsterBreeds.WIZARD.getVal()) && m2.getName().equals(MonsterBreeds.ORK.getVal())){
             m2.setDamage(0);
+            setPureMonster(true);
         }
-        if(m1.getName().equals(MonsterBreeds.KNIGHT.getVal()) && m2.getName().equals(SpellBreeds.SPELL_WATER.getVal())){
+        else if(m1.getName().equals(MonsterBreeds.KNIGHT.getVal()) && m2.getName().equals(SpellBreeds.SPELL_WATER.getVal())){
             m1.setDamage(0);
+            setPureMonster(true);
         }
-        if(m1.getName().equals(MonsterBreeds.KRAKEN.getVal()) && (m2.getName().equals(SpellBreeds.SPELL_WATER.getVal())
+        else if(m1.getName().equals(MonsterBreeds.KRAKEN.getVal()) && (m2.getName().equals(SpellBreeds.SPELL_WATER.getVal())
                 || m2.getName().equals(SpellBreeds.SPELL_FIRE.getVal()) || m2.getName().equals(SpellBreeds.SPELL_NONE.getVal()))){
             m2.setDamage(0);
+            setPureMonster(true);
         }
-        if(m1.getName().equals(MonsterBreeds.FIREELVES.getVal()) && m2.getName().equals(MonsterBreeds.DRAGON.getVal())){
+        else if(m1.getName().equals(MonsterBreeds.FIREELVES.getVal()) && m2.getName().equals(MonsterBreeds.DRAGON.getVal())){
             int damages = m1.getDamage();
             m1.setDamage(damages);
+            setPureMonster(true);
+        }
+        else if(m2.getName().equals(MonsterBreeds.GOBLIN.getVal()) && m1.getName().equals(MonsterBreeds.DRAGON.getVal())){
+            m2.setDamage(0);
+            setPureMonster(true);
+        }
+        else if(m2.getName().equals(MonsterBreeds.WIZARD.getVal()) && m1.getName().equals(MonsterBreeds.ORK.getVal())){
+            m1.setDamage(0);
+            setPureMonster(true);
+        }
+        else if(m2.getName().equals(MonsterBreeds.KNIGHT.getVal()) && m1.getName().equals(SpellBreeds.SPELL_WATER.getVal())){
+            m2.setDamage(0);
+            setPureMonster(true);
+        }
+        else if(m2.getName().equals(MonsterBreeds.KRAKEN.getVal()) && (m1.getName().equals(SpellBreeds.SPELL_WATER.getVal())
+                || m1.getName().equals(SpellBreeds.SPELL_FIRE.getVal()) || m1.getName().equals(SpellBreeds.SPELL_NONE.getVal()))){
+            m1.setDamage(0);
+            setPureMonster(true);
+        }
+        else if(m2.getName().equals(MonsterBreeds.FIREELVES.getVal()) && m1.getName().equals(MonsterBreeds.DRAGON.getVal())){
+            int damages = m1.getDamage();
+            m2.setDamage(damages);
+            setPureMonster(true);
+        }
+        else {
+            setPureMonster(false);
         }
     }
-    //finde which card is from which type
 
-
-    //play Method
-
+    //compare damages knowing if there are two pure monsters fighting or not?
+    public void compareDamage(Card c1, Card c2){
+        //save the default value first here then when the round ends, set it as it was.
+        int damageCard1 = c1.getDamage();
+        int damageCard2 = c2.getDamage();
+        //we see if there is a fight between pure monsters
+        monsterAgainstEachOther(c1, c2);
+        //if we have a fight between pure monsters then the element type doesn't play a role
+        if(getPureMonsters()){
+            //compare between damage value only
+            if (c1.getDamage() > c2.getDamage()){
+                setRoundWinner(user);
+            }else{
+                setRoundWinner(opponent);
+            }
+        }else{
+            //look if the attack is effective(it means: element types are different for the different cards)
+            Spell sp = new Spell();
+            sp.attackEffectiveness(c1,c2);
+            //calculate the damages (when we fight with different types of elements)
+            sp.damageCalculate(c1,c2);
+            //compare between the damages to define who wins
+            if (c1.getDamage() > c2.getDamage()){
+                //set the round winner
+                setRoundWinner(user);
+            }else{
+                setRoundWinner(opponent);
+            }
+        }
+        //reset the damages as they were in the beginning
+        c1.setDamage(damageCard1);
+        c2.setDamage(damageCard2);
+    }
+    //play Method which defines who wins which round and the game
+    public void startGame(User player, User againster){
+        //define Users
+        setUser(player);
+        setOpponent(againster);
+        //Stack stk = new Stack();
+        //buy a package with cards
+        player.getStack().buy_packages(player);
+        againster.getStack().buy_packages(againster);
+        //define the decks
+        createDeck(player);
+        createDeck(againster);
+        //as long that no more card are in the deck or the rounds are > 100 then stop the game
+        int counter = 0;
+        while(player.getDeck().deckSize()>0 && againster.getDeck().deckSize()>0 && getPlayedGames()<101){
+            //pick the cards for the respective User in their deck
+            Card card1 = player.getDeck().pickCardFromDeck(counter);
+            Card card2 = againster.getDeck().pickCardFromDeck(counter);
+            //compares the Damage and set the round winner
+            compareDamage(card1,card2);
+            printRoundWinner();
+            // and send the card to the other user deck
+            if(getRoundWinner().equals(player)){
+                Card removedCardFromUser2 = againster.getDeck().drawCardFromDeck();
+                player.getDeck().addCardToDeck(removedCardFromUser2);
+            }
+            else if(getRoundWinner().equals(againster)){
+                Card removedCardFromUser1 = player.getDeck().drawCardFromDeck();
+                againster.getDeck().addCardToDeck(removedCardFromUser1);
+            }
+            // increment the rounds played
+            counter++;
+            setPlayedGames(getPlayedGames()+1);
+        }
+        if (player.getDeck().deckSize() > againster.getDeck().deckSize()){
+            setWinner(player);
+        }else {
+            setWinner(againster);
+        }
+        //calculate the elo points for the Fighter
+        elo_points(player, againster);
+        battleLog(player, againster);
+    }
+    public void battleLog(User player, User againster){
+        //a detailed Log about the individual matches
+        player.scoreboard();
+        againster.scoreboard();
+        currWinner();
+        System.out.println("------------------------------------------------------------");
+        System.out.println("--> Winner of this game is: "+getWinner());
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("--> In this game were "+getPlayedGames()+" round(s) played!!");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("--> "+ player.getUsername() + " got " + player.getDeck().deckSize() + " card(s) on his deck!!");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("--> "+ againster.getUsername() + " got " + againster.getDeck().deckSize() + " card(s) on his deck!!");
+        System.out.println("------------------------------------------------------------");
+    }
 }
