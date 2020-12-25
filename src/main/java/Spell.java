@@ -1,7 +1,6 @@
 import java.util.Random;
 
 public class Spell extends Card{
-
     private boolean effectiveness;
 
     Spell(){
@@ -9,10 +8,11 @@ public class Spell extends Card{
         getDamage();
         getElement_type();
     }
-    Spell(String name){
 
+    Spell(String name){
         setName(name);
     }
+
     Spell(String name, int dmg, Elements elem){
         setName(name);
         setDamage(dmg);
@@ -27,11 +27,9 @@ public class Spell extends Card{
         return effectiveness;
     }
     public void attackEffectiveness(Card p1, Card p2){
-        //falls water->fire true
-        //falls fire->normal true
-        //falls normal->water true
-        //and vise versa also
-
+        //if water->fire true
+        //if fire->normal true
+        //if normal->water true
         if(p1.getElement_type() == Elements.WATER && p2.getElement_type() == Elements.FIRE){
             setEffectiveness(true);
         }
@@ -49,7 +47,8 @@ public class Spell extends Card{
         }
         else if(p2.getElement_type() == Elements.NORMAL && p1.getElement_type() == Elements.WATER){
             setEffectiveness(true);
-        }else {
+        }
+        else {
             setEffectiveness(false);
         }
     }
@@ -85,20 +84,10 @@ public class Spell extends Card{
                     c2.setDamage(c2.getDamage()*2);
                 }
             }
-            //?????
         }else{
-            //call the method that compares the damages
-
-            //compare between damage value
-            if (c1.getDamage() > c2.getDamage()){
-                //card c2 goes to the user 1
-
-            }else{
-                //card c1 goes to the user 2
-
-            }
+            c1.setDamage(c1.getDamage());
+            c2.setDamage(c2.getDamage());
         }
-
     }
 
 }
