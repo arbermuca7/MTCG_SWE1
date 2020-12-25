@@ -76,4 +76,5 @@ public class BattlefieldTests {
         assertEquals(actualDamage, expectedDamage, "The Damages should be overwritten to 0 !!");
     }
 
+
 }

@@ -55,8 +55,6 @@ public class SpellTests {
         b1.attackEffectiveness(spell1, spell2);
         boolean actual = b1.getEffectiveness();
 
-
-
         spell1.setDamage(100);
         spell2.setDamage(200);
 

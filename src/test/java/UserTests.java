@@ -7,7 +7,7 @@ public class UserTests {
     void testUpdateCoins(){
         User user1 = new User("Norbert");
 
-        int expected = 16;
+        int expected = 15;
         user1.updateCoins();
         int actual = user1.getCoins();
         //assert
