@@ -206,7 +206,7 @@ public class Battlefield {
 
             Card card2 = againster.getDeck().drawCardFromDeck();
             cardPicked(againster,card2);
-            
+
             //compares the Damage and set the round winner
             compareDamage(card1,card2);
             printRoundWinner();
