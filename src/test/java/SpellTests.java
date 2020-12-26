@@ -41,6 +41,7 @@ public class SpellTests {
         assertEquals(actual, expected, "They aren't effecting each other");
     }
     @Test
+    @DisplayName("Damage calculator between two cards")
     void testDamageCalculate(){
 
         Spell b1 = new Spell();
