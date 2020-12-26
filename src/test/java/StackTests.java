@@ -12,11 +12,10 @@ public class StackTests {
         Stack stk = new Stack();
 
         usr.getStack().buy_packages(usr);
-
-        ArrayList<Card> actual = stk.getStack();
+        ArrayList<Card> actual = usr.getStack().getStack();
         int actual_coins = usr.getCoins();
         //assert
-        assertEquals(stk.getStack(), actual, "The Monster card was successfully saved into the Deck!!");
+        assertEquals(usr.getStack().getStack(), actual, "The Monster card was successfully saved into the Deck!!");
         assertEquals(15,actual_coins);
     }
 

@@ -64,12 +64,10 @@ public class User{
     }
 
     public void updateCoins(){
-        System.out.println("****** You bought a card package!!!! ******");
         coins -= 5;
     }
     public void scoreboard(){
-        System.out.println("------------------------------------------------------------");
-        System.out.println("-->" + getUsername() + " has " + getUser_status()+" points!!");
+        System.out.println("--> " + getUsername() + " has " + getUser_status()+" points!!");
         System.out.println("------------------------------------------------------------");
     }
 

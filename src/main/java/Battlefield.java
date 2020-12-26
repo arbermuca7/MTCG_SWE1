@@ -9,7 +9,9 @@ public class Battlefield {
     private int playedGames;
     private boolean pureMonster;
 
-    Battlefield(){}
+    Battlefield(){
+
+    }
     public User getUser(){
         return user;
     }
@@ -79,10 +81,9 @@ public class Battlefield {
     }
 
     public void printRoundWinner(){
-        System.out.println("-------------------------------------");
         System.out.println("--> Round: " + getPlayedGames());
-        System.out.println("--> The winner is " + getRoundWinner());
-        System.out.println("-------------------------------------");
+        System.out.println("--> The winner is " + getRoundWinner().getUsername());
+        System.out.println("------------------------------------------------------------");
     }
     //save those MonsterBreeds in the Deck
     public void createDeck(User user){
@@ -184,27 +185,39 @@ public class Battlefield {
         //Stack stk = new Stack();
         //buy a package with cards
         player.getStack().buy_packages(player);
-        againster.getStack().buy_packages(againster);
-        //define the decks
         createDeck(player);
+        System.out.println("------------------------------------------------------------");
+        System.out.println("--> "+player.getUsername()+" bought a card package!!");
+        System.out.println("--> His Cards are : "+player.getStack().getStack());
+        System.out.println("--> His Deck  is : "+player.getDeck().getDeck());
+
+        againster.getStack().buy_packages(againster);
         createDeck(againster);
+        System.out.println("--> "+againster.getUsername()+" bought a card package!!");
+        System.out.println("--> His Cards are : "+againster.getStack().getStack().toString());
+        System.out.println("--> His Deck  is : "+againster.getDeck().getDeck().toString());
+        System.out.println("------------------------------------------------------------");
         //as long that no more card are in the deck or the rounds are > 100 then stop the game
         int counter = 0;
         while(player.getDeck().deckSize()>0 && againster.getDeck().deckSize()>0 && getPlayedGames()<101){
             //pick the cards for the respective User in their deck
-            Card card1 = player.getDeck().pickCardFromDeck(counter);
-            Card card2 = againster.getDeck().pickCardFromDeck(counter);
+            Card card1 = player.getDeck().drawCardFromDeck();
+            cardPicked(player,card1);
+
+            Card card2 = againster.getDeck().drawCardFromDeck();
+            cardPicked(againster,card2);
+            
             //compares the Damage and set the round winner
             compareDamage(card1,card2);
             printRoundWinner();
             // and send the card to the other user deck
             if(getRoundWinner().equals(player)){
-                Card removedCardFromUser2 = againster.getDeck().drawCardFromDeck();
-                player.getDeck().addCardToDeck(removedCardFromUser2);
+                player.getDeck().addCardToDeck(card1);
+                player.getDeck().addCardToDeck(card2);
             }
             else if(getRoundWinner().equals(againster)){
-                Card removedCardFromUser1 = player.getDeck().drawCardFromDeck();
-                againster.getDeck().addCardToDeck(removedCardFromUser1);
+                againster.getDeck().addCardToDeck(card2);
+                againster.getDeck().addCardToDeck(card1);
             }
             // increment the rounds played
             counter++;
@@ -226,16 +239,16 @@ public class Battlefield {
         againster.scoreboard();
         currWinner();
         System.out.println("------------------------------------------------------------");
-        System.out.println("--> Winner of this game is: "+getWinner());
-        System.out.println("------------------------------------------------------------");
-        System.out.println("------------------------------------------------------------");
+        System.out.println("--> Winner of this game is: "+getWinner().getUsername());
         System.out.println("--> In this game were "+getPlayedGames()+" round(s) played!!");
-        System.out.println("------------------------------------------------------------");
-        System.out.println("------------------------------------------------------------");
         System.out.println("--> "+ player.getUsername() + " got " + player.getDeck().deckSize() + " card(s) on his deck!!");
-        System.out.println("------------------------------------------------------------");
-        System.out.println("------------------------------------------------------------");
         System.out.println("--> "+ againster.getUsername() + " got " + againster.getDeck().deckSize() + " card(s) on his deck!!");
+        System.out.println("------------------------------------------------------------");
+    }
+
+    public void cardPicked(User usr, Card card){
+        System.out.println("--> "+ usr.getUsername() + " picked: ");
+        System.out.println("   >> Name: " + card.getName() + "\n   >> Element: " + card.getElement_type() +"\n   >> Damage: " +card.getDamage());
         System.out.println("------------------------------------------------------------");
     }
 }

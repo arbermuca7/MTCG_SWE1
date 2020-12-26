@@ -50,7 +50,7 @@ public class Stack{
                     Elements elem = Elements.getRandomElement();
                     //if the monster Fire elves is then we can define the element before and it is fire
                     if (MonsterBreeds.getMonster(whichMonster).equals(MonsterBreeds.FIREELVES.getVal())){
-                        Card monster = new Monster(MonsterBreeds.getMonster(whichMonster),damageMonster,Elements.FIRE);
+                        Card monster = new Monster(MonsterBreeds.FIREELVES.getVal(),damageMonster,Elements.FIRE);
                         pkg.add(monster);
                     }else{
                         //if the monster is not a fire elves, then we can define by random what element type should he get
@@ -65,15 +65,15 @@ public class Stack{
                     int damageSpell = randSpell.nextInt(1951)+50;
 
                     if (SpellBreeds.getSpell(whichSpell).equals(SpellBreeds.SPELL_FIRE.getVal())){
-                        Card spell = new Spell(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.FIRE);
+                        Card spell = new Spell(SpellBreeds.SPELL_FIRE.getVal(),damageSpell,Elements.FIRE);
                         pkg.add(spell);
                     }
                     else if (SpellBreeds.getSpell(whichSpell).equals(SpellBreeds.SPELL_NONE.getVal())){
-                        Card spell = new Spell(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.NORMAL);
+                        Card spell = new Spell(SpellBreeds.SPELL_NONE.getVal(),damageSpell,Elements.NORMAL);
                         pkg.add(spell);
                     }
                     else if (SpellBreeds.getSpell(whichSpell).equals(SpellBreeds.SPELL_WATER.getVal())){
-                        Card spell = new Spell(SpellBreeds.getSpell(whichSpell),damageSpell,Elements.WATER);
+                        Card spell = new Spell(SpellBreeds.SPELL_WATER.getVal(),damageSpell,Elements.WATER);
                         pkg.add(spell);
                     }
                 }

@@ -57,6 +57,7 @@ public class Spell extends Card{
                 if (c2.getElement_type() == Elements.FIRE){
                     c1.setDamage(c1.getDamage()*2);
                     c2.setDamage(c2.getDamage()/2);
+                    System.out.println();
                 }
                 else if (c2.getElement_type() == Elements.NORMAL){
                     c1.setDamage(c1.getDamage()/2);
