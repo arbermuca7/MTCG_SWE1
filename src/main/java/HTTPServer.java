@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -8,13 +9,19 @@ import java.util.StringTokenizer;
 public class HTTPServer implements Runnable{
     Socket cli;
     List<String> messages;
+    private Connection connection = null;
+
     public HTTPServer(Socket s, List<String> msg){
 
         cli = s;
         messages = msg;
+
+    }
+    public HTTPServer(Connection conn){
+        connection = conn;
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         List<String> messages = new ArrayList<>();
         try{
             //open a tcp socket
@@ -32,7 +39,7 @@ public class HTTPServer implements Runnable{
             e.printStackTrace();
         }
 
-    }
+    }*/
     @Override
     public void run() {
         //read the request
@@ -170,7 +177,6 @@ public class HTTPServer implements Runnable{
     }
     public static String readFirstLineHeader(String input){
         //parse the request
-        //StringTokenizer st = new StringTokenizer(inputStream);
         StringTokenizer st = new StringTokenizer(input);
         //get the method
         String method = st.nextToken().toUpperCase();
@@ -223,7 +229,7 @@ public class HTTPServer implements Runnable{
             requestBody.append(line);
         }
         String body = requestBody.toString();
-
+        System.out.println("HEADER:\n"+body);
         String[] requestLines = body.split("\r\n");
         //split the line of the content type where a space is
         String[] requestLine = requestLines[0].split(" ");
@@ -246,4 +252,126 @@ public class HTTPServer implements Runnable{
 
         return bodyPlusContentTyp;
     }
+
+    public void openConnection(String url, String user, String password) throws SQLException {
+        connection = DriverManager.getConnection(url, user, password);
+    }
+
+    public void closeConnection() throws SQLException {
+        connection.close();
+        connection = null;
+    }
+
+    public boolean signUp(User user) throws SQLException {
+        //insert into the db
+        //if the user exist then return false
+        // if not the create a new user in the db with this name and password
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO fighter (username,password) VALUES (?,?); ");
+            statement.setString(1,user.getUsername());
+            statement.setString(2,user.getPassword());
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        if (userCheck(user.getUsername())){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean logIn(User user){
+        //select the username of the user, if it doesnt exist then create
+        //if it exists select also the password from db if those are correct
+        // then login
+        try {
+            PreparedStatement statement = connection.prepareStatement(" SELECT username, password FROM fighter WHERE username = ?; ");
+            statement.setString(1,user.getUsername());
+            ResultSet rs = statement.executeQuery();
+            String name = null;
+            String pwd = null;
+            while(rs.next()){
+                name = rs.getString(1);
+                pwd = rs.getString(2);
+            }
+            if(user.getUsername().equals(name)){
+                if (user.getPassword().equals(pwd)){
+                    System.out.println("login_successful");
+                    return true;
+                }
+            }
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        System.out.println("login_denied");
+        return false;
+    }
+    public void editProfile(User user, String bio, String image){
+        //update into db
+        //we see if the user first of all exists
+        //then update the user with the parameter we took from the entwickler
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE fighter SET bio=?, image=? WHERE username=?;\n");
+            statement.setString(1,bio);
+            statement.setString(2,image);
+            statement.setString(3, user.getUsername());
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public boolean deleteUser(User usr) throws SQLException {
+        //if a user exists then if u want you can delete it
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM fighter WHERE username = ?; ");
+            statement.setString(1,usr.getUsername());
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        if (!userCheck(usr.getUsername())){
+            System.out.println("User \""+usr.getUsername()+"\" was successfully deleted");
+            return true;
+        }
+        return false;
+
+    }
+
+    public boolean tokenCheck(String token, User user){
+        //check if the token that came is same as the one that the user should have
+        // if its true then the other operations can be fulfilled
+        String checkToken = user.getUsername()+"-mctgToken";
+        if(token.equals(checkToken)){
+            return true;
+        }
+        return false;
+    }
+
+    public String createToken(String usr){
+        String token = usr+"-mtcgToken";
+        return token;
+    }
+    public boolean userCheck(String user) throws SQLException{
+        //check if a user with this name in the db exists
+        //if not return false
+        try {
+            PreparedStatement statement = connection.prepareStatement(" SELECT username FROM fighter WHERE username = ?; ");
+            statement.setString(1,user);
+            ResultSet rs = statement.executeQuery();
+            String name = null;
+            while(rs.next()){
+                name = rs.getString(1);
+            }
+            if(user.equals(name)){
+                return true;
+            }
+        }catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+
+
 }
