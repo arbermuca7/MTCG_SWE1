@@ -243,6 +243,8 @@ public class Battlefield {
         System.out.println("--> In this game were "+getPlayedGames()+" round(s) played!!");
         System.out.println("--> "+ player.getUsername() + " got " + player.getDeck().deckSize() + " card(s) on his deck!!");
         System.out.println("--> "+ againster.getUsername() + " got " + againster.getDeck().deckSize() + " card(s) on his deck!!");
+        System.out.println("--> "+ player.getUsername() + " got " + player.getCoins() + " coins left!!");
+        System.out.println("--> "+ againster.getUsername() + " got " + againster.getCoins() + " coins left!!");
         System.out.println("------------------------------------------------------------");
     }
 
