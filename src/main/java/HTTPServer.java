@@ -8,28 +8,35 @@ import java.util.StringTokenizer;
 
 public class HTTPServer implements Runnable{
     Socket cli;
+    List<User> users;
     List<String> messages;
+    List<String> stack;
+    List<String> deck;
+    Battlefield battle = new Battlefield();
     private Connection connection = null;
 
-    public HTTPServer(Socket s, List<String> msg){
-
+    public HTTPServer(Socket s, List<User> usr, List<String> stk, List<String> dck){
         cli = s;
-        messages = msg;
-
+        users = usr;
+        stack = stk;
+        deck =dck;
     }
     public HTTPServer(Connection conn){
         connection = conn;
     }
 
-    /*public static void main(String[] args){
+    public static void main(String[] args){
         List<String> messages = new ArrayList<>();
+        List<User> users  = new ArrayList<>();
+        List<String> stack  = new ArrayList<>();
+        List<String> deck  = new ArrayList<>();
         try{
             //open a tcp socket
             ServerSocket serverSocket = new ServerSocket(10001);
 
             while (true){
                 //accept the client connection
-                HTTPServer httpServer = new HTTPServer(serverSocket.accept(),messages);
+                HTTPServer httpServer = new HTTPServer(serverSocket.accept(),users,stack,deck);
                 Thread thread = new Thread(httpServer);
                 thread.start();
 
@@ -39,10 +46,11 @@ public class HTTPServer implements Runnable{
             e.printStackTrace();
         }
 
-    }*/
+    }
     @Override
     public void run() {
         //read the request
+
         BufferedReader in = null;
         PrintWriter out = null;
         BufferedOutputStream contentSend = null;
@@ -56,6 +64,8 @@ public class HTTPServer implements Runnable{
             contentSend = new BufferedOutputStream(cli.getOutputStream());
             //get the first line of the request
             inputStream = in.readLine();
+
+            openConnection("jdbc:postgresql://localhost:5432/swe1db","postgres","admin");
 
             if (inputStream != null) {
 
@@ -72,29 +82,202 @@ public class HTTPServer implements Runnable{
                 String contentType = null;
                 if (!RequestMethods.hasMethod(method)){
                     //send a response 501 not implemented, if we haven't implement the asked Method
-                    sendRespond(out,contentSend, ResponseStatusCode.getDesc(501),version,contentType,"Wrong method chosen".getBytes());
+                    sendRespond(out,contentSend, ResponseStatusCode.getDesc(501),version,contentType,"Wrong Method chosen".getBytes());
                 }
+                /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
                 else if (method.equals(RequestMethods.GET.getVal())) {
-
-                    String msgID = pathSpliter(path);
-
-                    if (path.equals("/messages")) {
-                        //take all messages in the List in a single string
-                        String allMessages = listAllElements(messages);
-                        //send the respond to the client
-                        sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, allMessages.getBytes());
-
+                    String secondPartPath = pathSpliter(path);
+                    String allCards = null;
+                    if (path.equals("/cards")) {
+                        //take the token
+                        String secureToken = takeToken(in,method);
+                        //check if the token was send in the request
+                        if (secureToken != null) {
+                            //take the username from the token
+                            String[] userSplit = secureToken.split("-");
+                            String user = userSplit[0];
+                            //if the user exists take the stack of cards from him and return them as a response
+                            boolean userExists = userCheck(user);
+                            if (userExists) {
+                                //User usr = new User("arber");
+                                //users.add(usr);
+                                //System.out.println("SIze of  user list: "+users.size());
+                                for (int i = 0; i < users.size(); i++) {
+                                    if (user.equals(users.get(i).getUsername())) {
+                                        User player = users.get(i);
+                                        //System.out.println("SIze: "+player.getStack().stackSize());
+                                        if(player.getStack().stackSize()>0){
+                                            for (int j = 0; j < player.getStack().stackSize(); j++) {
+                                                stack.add(player.getStack().pickCardFromStack(i).getName() + ","
+                                                        + player.getStack().pickCardFromStack(i).getDamage() + "," + player.getStack().pickCardFromStack(i).getElement_type());
+                                            }
+                                            allCards = listAllCards(stack);
+                                        }else{
+                                            allCards = "No Cards in Stack yet!!";
+                                        }
+                                    }
+                                }
+                                //send the respond to the client
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, allCards.getBytes());
+                            } else {
+                                //if user doesnt exist then send a not found message
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
+                            }
+                        }else{
+                            //if the token is null, it means you can show the client anything
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
+                        }
                     }
-                    else if(path.equals("/messages/"+msgID)){
-                        //return the given ID from String to int
-                        int msgId = Integer.parseInt(msgID);
-                        //send the respond to the client
-                        String specificMsg = messages.indexOf(messages.get(msgId-1))+1+": "+messages.get(msgId-1);
-                        sendRespond(out,contentSend, ResponseStatusCode.getDesc(200),version,contentType,specificMsg.getBytes());
+                    else if(path.equals("/deck")) {
+                        //take the token
+                        String secureToken = takeToken(in,method);
+                        //check if the token was send in the request
+                        if (secureToken != null) {
+                            //take the username from the token
+                            String[] userSplit = secureToken.split("-");
+                            String user = userSplit[0];
+                            //if the user exists take the deck of cards from him and return them as a response
+                            boolean userExists = userCheck(user);
+                            if (userExists) {
+                                //User usr = new User("arber");
+                                //users.add(usr);
+                                //System.out.println("SIze of  user list: "+users.size());
+                                for (int i = 0; i < users.size(); i++) {
+                                    if (user.equals(users.get(i).getUsername())) {
+                                        User player = users.get(i);
+                                        //Battlefield battle = new Battlefield();
+                                        //battle.createDeck(player);
+                                        if(player.getDeck().deckSize()>0){
+                                            for (int j = 0; j < player.getDeck().deckSize(); j++) {
+                                                deck.add(player.getDeck().pickCardFromDeck(j).getName()+","
+                                                        +player.getDeck().pickCardFromDeck(j).getDamage()+","+player.getDeck().pickCardFromDeck(j).getElement_type());
+                                            }
+                                            allCards = listAllCards(deck);
+                                        }else{
+                                            allCards = "The deck is not created yet!!";
+                                        }
+                                    }
+                                }
+                                //send the respond to the client
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, allCards.getBytes());
+                            }else {
+                                //if user doesnt exist then send a not found message
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
+                            }
+                        }else{
+                            //if the token is null, it means you can show the client anything
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
+                        }
+                    }else if (path.equals("/users/"+secondPartPath)){
+                        String userInfo = null;
+                        //take the token
+                        String secureToken = takeToken(in,method);
+                        //check if the token was send in the request
+                        if (secureToken != null) {
+                            //take the username from the token
+                            String[] userSplit = secureToken.split("-");
+                            String user = userSplit[0];
+                            if(user.equals(secondPartPath)){
+                                //if the user exists take the deck of cards from him and return them as a response
+                                boolean userExists = userCheck(user);
+                                if (userExists) {
+                                    //User usr = new User("arber");
+                                    //users.add(usr);
+                                    //System.out.println("SIze of  user list: "+users.size());
+                                    for (int i = 0; i < users.size(); i++) {
+                                        if (user.equals(users.get(i).getUsername())) {
+                                            User player = users.get(i);
+                                            userInfo = player.getUsername()+":"
+                                                    +player.getPassword()+":"+player.getBio()+":"+player.getImage();
+                                        }
+                                    }
+                                    //send the respond to the client
+                                    sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, userInfo.getBytes());
+                                }else {
+                                    //if user doesnt exist then send a not found message
+                                    sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
+                                }
+                            }else{
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is incorrect!!".getBytes());
+
+                            }
+                        }else{
+                            //if the token is null, it means you can show the client anything
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
+                        }
+                    }else if (path.equals("/score")){
+                        String info = null;
+                        //take the token
+                        String secureToken = takeToken(in,method);
+                        //check if the token was send in the request
+                        if (secureToken != null) {
+                            //take the username from the token
+                            String[] userSplit = secureToken.split("-");
+                            String user = userSplit[0];
+                            //if the user exists take the deck of cards from him and return them as a response
+                            boolean userExists = userCheck(user);
+                            if (userExists) {
+                                //User usr = new User("arber");
+                                //users.add(usr);
+                                //System.out.println("SIze of  user list: "+users.size());
+                                for (int i = 0; i < users.size(); i++) {
+                                    if (user.equals(users.get(i).getUsername())) {
+                                        User player = users.get(i);
+                                        info = "--> " + player.getUsername() + " has " + player.getUser_status()+" points!!";
+                                    }
+                                }
+                                //send the respond to the client
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, info.getBytes());
+                            }else {
+                                //if user doesnt exist then send a not found message
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
+                            }
+                        }else{
+                            //if the token is null, it means you can show the client anything
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
+                        }
+                    }
+                    else if (path.equals("/stats")){
+                        String info = null;
+                        //take the token
+                        String secureToken = takeToken(in,method);
+                        //check if the token was send in the request
+                        if (secureToken != null) {
+                            //take the username from the token
+                            String[] userSplit = secureToken.split("-");
+                            String user = userSplit[0];
+                            //if the user exists take the deck of cards from him and return them as a response
+                            boolean userExists = userCheck(user);
+                            if (userExists) {
+                                //User usr = new User("arber");
+                                //users.add(usr);
+                                //System.out.println("SIze of  user list: "+users.size());
+                                for (int i = 0; i < users.size(); i++) {
+                                    if (user.equals(users.get(i).getUsername())) {
+                                        User player = users.get(i);
+                                        info = "------------------------------------------------------------\n"
+                                                + "--> Winner of this game is: "+battle.getWinner().getUsername()
+                                                +"\n--> In this game were "+battle.getPlayedGames()+" round(s) played!!"
+                                                +"\n--> "+ player.getUsername() + " got " + player.getDeck().deckSize() + " card(s) on his deck!!"
+                                                +"\n--> "+ player.getUsername() + " got " + player.getCoins() + " coins left!!"
+                                                +"\n------------------------------------------------------------";
+                                    }
+                                }
+                                //send the respond to the client
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, info.getBytes());
+                            }else {
+                                //if user doesnt exist then send a not found message
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
+                            }
+                        }else{
+                            //if the token is null, it means you can show the client anything
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
+                        }
                     }
                     else{
-                        sendRespond(out,contentSend, ResponseStatusCode.getDesc(404),version,contentType,"Wrong URI".getBytes());
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Wrong URI".getBytes());
                     }
+                /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
                 }
                 else if (method.equals(RequestMethods.POST.getVal())) {
 
@@ -143,26 +326,39 @@ public class HTTPServer implements Runnable{
                         sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "You can only update a specific message".getBytes());
                     }
                 }
-                //delete a certain message from the list
+                /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
+                //delete a certain user from Datenbank
                 else if(method.equals(RequestMethods.DELETE.getVal())){
+                    //take the token
+                    String secureToken = takeToken(in,method);
+                    //check if the token was send in the request
+                    if (secureToken != null) {
+                        //take the username from the token
+                        String[] userSplit = secureToken.split("-");
+                        String user = userSplit[0];
+                        //if the user exists take the deck of cards from him and return them as a response
+                        boolean userExists = userCheck(user);
+                        if (userExists) {
 
-                    String msgID = pathSpliter(path);
-
-                    if (path.equals("/messages/"+msgID)){
-                        int msgId=Integer.parseInt(msgID);
-                        if (msgId-1 >= messages.size()){
-                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "ID not founded".getBytes());
-                        }else{
-                            messages.remove(msgId-1);
-                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, "OK".getBytes());
+                            for (int i = 0; i < users.size(); i++) {
+                                if (user.equals(users.get(i).getUsername())) {
+                                    User player = users.get(i);
+                                    deleteUser(player);
+                                }
+                            }
+                            //send the respond to the client
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, "Successfully deleted!!".getBytes());
+                        }else {
+                            //if user doesnt exist then send a not found message
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
                         }
-
                     }else{
-                        sendRespond(out, contentSend, ResponseStatusCode.getDesc(405), version, contentType, "You aren't allowed to delete the entire List".getBytes());
+                        //if the token is null, it means you can show the client anything
+                        sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing!!".getBytes());
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }finally {
             try{
@@ -170,7 +366,8 @@ public class HTTPServer implements Runnable{
                 out.close();
                 contentSend.close();
                 cli.close();
-            } catch (IOException e) {
+                closeConnection();
+            } catch (IOException | SQLException e) {
                 System.err.println("Error closing stream : " + e.getMessage());
             }
         }
@@ -197,6 +394,22 @@ public class HTTPServer implements Runnable{
         }
         return null;
     }
+    public static String takeToken(BufferedReader in, String method) throws IOException {
+        if(method.equals(RequestMethods.GET.getVal())){
+            String secureToken = takeTheToken(in);
+            if(secureToken.matches("[a-zA-Z]+[-][mtcgToken]{9}")){
+                return secureToken;
+            }
+        }else{
+            String bodyReq = takeTheBody(in);
+            String[] bodySplit = bodyReq.split(",");
+            String secureToken = bodySplit[2];
+            if(secureToken.matches("[a-zA-Z]+[-][mtcgToken]{9}")){
+                return secureToken;
+            }
+        }
+        return null;
+    }
     public static String listAllElements(List<String> messages){
 
         int i = 0;
@@ -211,6 +424,17 @@ public class HTTPServer implements Runnable{
 
         return allMessages;
     }
+    public static String listAllCards(List<String> crd){
+        int i = 0;
+        StringBuilder msgBuilder = new StringBuilder();
+        msgBuilder.append("Stack of Cards:\n");
+        while (i < crd.size() - 1) {
+            msgBuilder.append(crd.get(i)+"\n");
+            i++;
+        }
+        msgBuilder.append(crd.get(i));
+        return msgBuilder.toString();
+    }
     private static void sendRespond(PrintWriter out,BufferedOutputStream contentSend, String status, String version, String contentTyp, byte[] content) throws IOException {
         //send the response to the client's output stream
         out.println(version +" "+ status);
@@ -219,6 +443,30 @@ public class HTTPServer implements Runnable{
         out.flush(); // flush character output stream buffer
         contentSend.write(content);
         contentSend.flush();
+    }
+    public static String takeTheToken(BufferedReader in) throws IOException {
+        //take the other part of the header + the body
+        StringBuilder requestBody = new StringBuilder();
+        //divide every field of the header and the last part(the body) with a newline
+        while (in.ready()) {
+            char line = (char) in.read();
+            requestBody.append(line);
+        }
+        String body = requestBody.toString();
+        //System.out.println("HEADER full:\n"+body);
+        String[] requestLines = body.split("\r\n");
+        //System.out.println("Length of header "+requestLines.length);
+        //split the line of the token where a space is
+        String token = null;
+        if(requestLines.length>3){
+            String[] requestToken = requestLines[3].split(" ");
+            //take the token
+            token = requestToken[2];
+        }else{
+            return "";
+        }
+        System.out.println("token: "+token);
+        return token;
     }
     public static String takeTheBody(BufferedReader in) throws IOException {
         //take the other part of the header + the body
@@ -229,28 +477,32 @@ public class HTTPServer implements Runnable{
             requestBody.append(line);
         }
         String body = requestBody.toString();
-        System.out.println("HEADER:\n"+body);
+        System.out.println("HEADER full:\n"+body);
         String[] requestLines = body.split("\r\n");
         //split the line of the content type where a space is
         String[] requestLine = requestLines[0].split(" ");
         //take the content type
         String contentType = requestLine[1];
+        //split the line of the token where a space is
+        String[] requestToken = requestLines[3].split(" ");
+        //take the token
+        String token = requestToken[2];
         //list for the header
         List<String> _headers = new ArrayList<String>();
         //save the header in the List
-        for (int i = 1; i < requestLines.length; i++) {
+        for (int i = 2; i < requestLines.length; i++) {
             String header = requestLines[i];
             _headers.add(header);
         }
+        System.out.println("token: "+token);
+        System.out.println("content type: "+contentType);
+        System.out.println("HEADER:"+_headers);
         String bodyContent = null;
         //save the body into a string
-        if (_headers != null && !_headers.isEmpty()) {
+        if (!_headers.isEmpty()) {
             bodyContent = _headers.get(_headers.size() - 1);
         }
-
-        String bodyPlusContentTyp= bodyContent+","+contentType;
-
-        return bodyPlusContentTyp;
+        return bodyContent+","+contentType+","+token;
     }
 
     public void openConnection(String url, String user, String password) throws SQLException {
@@ -321,7 +573,7 @@ public class HTTPServer implements Runnable{
         }
     }
 
-    public boolean deleteUser(User usr) throws SQLException {
+    public void deleteUser(User usr) throws SQLException {
         //if a user exists then if u want you can delete it
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM fighter WHERE username = ?; ");
@@ -332,9 +584,7 @@ public class HTTPServer implements Runnable{
         }
         if (!userCheck(usr.getUsername())){
             System.out.println("User \""+usr.getUsername()+"\" was successfully deleted");
-            return true;
         }
-        return false;
 
     }
 
@@ -359,12 +609,14 @@ public class HTTPServer implements Runnable{
             PreparedStatement statement = connection.prepareStatement(" SELECT username FROM fighter WHERE username = ?; ");
             statement.setString(1,user);
             ResultSet rs = statement.executeQuery();
-            String name = null;
+
             while(rs.next()){
-                name = rs.getString(1);
-            }
-            if(user.equals(name)){
-                return true;
+                String name = rs.getString(1);
+                if(user.equals(name)){
+                    return true;
+                }else{
+                    return false;
+                }
             }
         }catch (SQLException ex){
             ex.printStackTrace();
