@@ -1,3 +1,6 @@
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -280,51 +283,105 @@ public class HTTPServer implements Runnable{
                 /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
                 }
                 else if (method.equals(RequestMethods.POST.getVal())) {
-
+                    ObjectMapper objectMapper = new ObjectMapper();
                     String bodyReq = takeTheBody(in);
-
-                    String[] bodySplit = bodyReq.split(",");
-
+                    String[] bodySplit = bodyReq.split("/");
                     String bodyContent = bodySplit[0];
                     contentType = bodySplit[1];
 
-                    messages.add(bodyContent);
+                    if (path.equals("/users")) {
+                        //User player = objectMapper.readValue(bodyContent, User.class);
+                        JsonNode jsonNode = objectMapper.readTree(bodyContent);
+                        String username = jsonNode.get("Username").asText();
+                        String password = jsonNode.get("Password").asText();
+                        User user = new User(username,password);
+                        boolean userExists = userCheck(username);
+                        //If the user exist we can't create a new one, because every user is unique
+                        if(userExists){
+                            //if user  exist then send a not found message
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(400), version, contentType, "User already exists!!".getBytes());
+                        }else{
+                            boolean userCreated = signUp(user);
+                            if(userCreated){
+                                //send the respond to the client
+                                String response = "The user was successfully created";
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(201), version, contentType, response.getBytes());
+                            }
+                        }
 
-                    //send the response on the client
-                    String messageContent =messages.indexOf(messages.get(messages.size()-1))+1+": "+messages.get(messages.size()-1);
-                    sendRespond(out,contentSend, ResponseStatusCode.getDesc(201),version,contentType,messageContent.getBytes());
+                    }
+                    else if (path.equals("/sessions")) {
+                        //User player = objectMapper.readValue(bodyContent, User.class);
+                        JsonNode node = objectMapper.readTree(bodyContent);
+                        String username = node.get("Username").asText();
+                        String password = node.get("Password").asText();
+                        boolean userExists = userCheck(username);
+                        //If the user exist we can't create a new one, because every user is unique
+                        if(userExists){
+                            boolean userLoggedIn = logIn(username,password);
+                            if(userLoggedIn){
+                                String response = "The user was successfully logged in";
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, response.getBytes());
+                            }else{
+                                String response = "Wrong Username or Password!!";
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, response.getBytes());
+                            }
+                        }else{
+                                //send the respond to the client
+                                String response = "The user doesn't exist!";
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, response.getBytes());
+
+                        }
+
+                    }
                 }
+                /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
                 //update a message in the list
                 else if(method.equals(RequestMethods.PUT.getVal())) {
-
+                    ObjectMapper objectMapper = new ObjectMapper();
                     String bodyReq = takeTheBody(in);
-
-                    String[] bodySplit = bodyReq.split(",");
-
+                    String[] bodySplit = bodyReq.split("/");
                     String bodyContent = bodySplit[0];
                     contentType = bodySplit[1];
+                    String secureToken = bodySplit[3];
 
-                    String msgID = pathSpliter(path);
+                    String secondPartPath = pathSpliter(path);
 
-                    if (path.equals("/messages/" + msgID)) {
-                        //return the given ID from String to int
-                        int msgId = Integer.parseInt(msgID);
-                        //if the input with that values doesnt exist then add a new one.
-                        if (bodyContent == null) {
-                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(204), version, contentType, "no content".getBytes());
-                        } else if (messages.size() <= msgId-1) {
-                            messages.add(bodyContent);
-                            //send the response on the client
-                            String messageContent = messages.indexOf(messages.get(messages.size() - 1)) + 1 + ": " + messages.get(messages.size() - 1);
-                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(201), version, contentType, messageContent.getBytes());
-                        } else {
-                            messages.set(msgId - 1, bodyContent);
-                            String specificMsgUpdate = messages.indexOf(messages.get(msgId - 1)) + 1 + ": " + messages.get(msgId - 1);
-                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, specificMsgUpdate.getBytes());
+                    if (path.equals("/users/"+secondPartPath)){
+                        String userInfo = "";
+                        //check if the token was send in the request
+                        if (secureToken != null) {
+                            //take the username from the token
+                            String[] userSplit = secureToken.split("-");
+                            String user = userSplit[0];
+                            if(user.equals(secondPartPath)){
+                                //if the user exists take the deck of cards from him and return them as a response
+
+                                boolean userExists = userCheck(user);
+                                if (userExists) {
+                                    JsonNode node = objectMapper.readTree(bodyContent);
+                                    String username = node.get("Name").asText();
+                                    String bio = node.get("Bio").asText();
+                                    String image = node.get("Image").asText();
+
+                                    editProfile(user,username,bio,image);
+                                    userInfo = "It was successfully edited!!";
+                                    //send the respond to the client
+                                    sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, userInfo.getBytes());
+                                }else {
+                                    //if user doesnt exist then send a not found message
+                                    sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
+                                }
+                            }else{
+                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is incorrect!!".getBytes());
+
+                            }
+                        }else{
+                            //if the token is null, it means you can show the client anything
+                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
                         }
-                    } else {
-                        sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "You can only update a specific message".getBytes());
                     }
+
                 }
                 /*-----------------------------------------------------------------------------------------------------------------------------------------------------*/
                 //delete a certain user from Datenbank
@@ -402,8 +459,8 @@ public class HTTPServer implements Runnable{
             }
         }else{
             String bodyReq = takeTheBody(in);
-            String[] bodySplit = bodyReq.split(",");
-            String secureToken = bodySplit[2];
+            String[] bodySplit = bodyReq.split("/");
+            String secureToken = bodySplit[3];
             if(secureToken.matches("[a-zA-Z]+[-][mtcgToken]{9}")){
                 return secureToken;
             }
@@ -455,7 +512,6 @@ public class HTTPServer implements Runnable{
         String body = requestBody.toString();
         //System.out.println("HEADER full:\n"+body);
         String[] requestLines = body.split("\r\n");
-        //System.out.println("Length of header "+requestLines.length);
         //split the line of the token where a space is
         String token = null;
         if(requestLines.length>3){
@@ -479,14 +535,35 @@ public class HTTPServer implements Runnable{
         String body = requestBody.toString();
         System.out.println("HEADER full:\n"+body);
         String[] requestLines = body.split("\r\n");
-        //split the line of the content type where a space is
+        //System.out.println("RequestLines Length: "+requestLines.length);
+        /*for (String line : requestLines) {
+            System.out.println("RequestLines: " + line);
+        }*/
+        //split the line of the content type if you use postman where a space is
         String[] requestLine = requestLines[0].split(" ");
-        //take the content type
-        String contentType = requestLine[1];
+        String contentType = "";
+
+        //split the line of the content type if you use curl where a space is
+        String[] request = requestLines[3].split(" ");
+
         //split the line of the token where a space is
-        String[] requestToken = requestLines[3].split(" ");
+        String[] requestToken = requestLines[4].split(" ");
         //take the token
-        String token = requestToken[2];
+        String token = "";
+
+        //it comes inside the if , when we use postman
+        if(requestLine[0].equals("Content-Type:")){
+            //take the content type
+            contentType = requestLine[1];
+        }//otherwise if its curl it comes in else
+        else{
+            //take the content type
+            contentType = request[1];
+        }
+        if(requestToken[0].equals("Authorization:")){
+            token = requestToken[2];
+        }
+
         //list for the header
         List<String> _headers = new ArrayList<String>();
         //save the header in the List
@@ -494,6 +571,7 @@ public class HTTPServer implements Runnable{
             String header = requestLines[i];
             _headers.add(header);
         }
+
         System.out.println("token: "+token);
         System.out.println("content type: "+contentType);
         System.out.println("HEADER:"+_headers);
@@ -502,7 +580,8 @@ public class HTTPServer implements Runnable{
         if (!_headers.isEmpty()) {
             bodyContent = _headers.get(_headers.size() - 1);
         }
-        return bodyContent+","+contentType+","+token;
+        System.out.println("body: "+bodyContent);
+        return bodyContent+"/"+contentType+"/"+token;
     }
 
     public void openConnection(String url, String user, String password) throws SQLException {
@@ -532,13 +611,13 @@ public class HTTPServer implements Runnable{
         return false;
     }
 
-    public boolean logIn(User user){
+    public boolean logIn(String username, String password){
         //select the username of the user, if it doesnt exist then create
         //if it exists select also the password from db if those are correct
         // then login
         try {
             PreparedStatement statement = connection.prepareStatement(" SELECT username, password FROM fighter WHERE username = ?; ");
-            statement.setString(1,user.getUsername());
+            statement.setString(1,username);
             ResultSet rs = statement.executeQuery();
             String name = null;
             String pwd = null;
@@ -546,8 +625,8 @@ public class HTTPServer implements Runnable{
                 name = rs.getString(1);
                 pwd = rs.getString(2);
             }
-            if(user.getUsername().equals(name)){
-                if (user.getPassword().equals(pwd)){
+            if(username.equals(name)){
+                if (password.equals(pwd)){
                     System.out.println("login_successful");
                     return true;
                 }
@@ -558,15 +637,16 @@ public class HTTPServer implements Runnable{
         System.out.println("login_denied");
         return false;
     }
-    public void editProfile(User user, String bio, String image){
+    public void editProfile(String user,String name, String bio, String image){
         //update into db
         //we see if the user first of all exists
         //then update the user with the parameter we took from the entwickler
         try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE fighter SET bio=?, image=? WHERE username=?;\n");
-            statement.setString(1,bio);
-            statement.setString(2,image);
-            statement.setString(3, user.getUsername());
+            PreparedStatement statement = connection.prepareStatement("UPDATE fighter SET firstname=?, bio=?, image=? WHERE username=?;\n");
+            statement.setString(1,name);
+            statement.setString(2,bio);
+            statement.setString(3,image);
+            statement.setString(4, user);
             statement.execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
