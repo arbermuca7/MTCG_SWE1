@@ -26,7 +26,8 @@ public class StackTests {
     void testBuyPackage(){
         User usr = new User("Arber");
 
-        usr.getStack().buy_packages(usr);
+        usr.getStack().buy_packages();
+        usr.updateCoins();
         ArrayList<Card> actual = usr.getStack().getStack();
         int actual_coins = usr.getCoins();
         //assert
