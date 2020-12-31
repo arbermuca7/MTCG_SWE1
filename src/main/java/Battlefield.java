@@ -182,7 +182,6 @@ public class Battlefield {
         //define Users
         setUser(player);
         setOpponent(againster);
-        //Stack stk = new Stack();
         //buy a package with cards
         //player.getStack().buy_packages();
         createDeck(player);
@@ -199,7 +198,7 @@ public class Battlefield {
         System.out.println("------------------------------------------------------------");
         //as long that no more card are in the deck or the rounds are > 100 then stop the game
         int counter = 0;
-        while(player.getDeck().deckSize()>0 && againster.getDeck().deckSize()>0 && getPlayedGames()<101){
+        while(player.getDeck().deckSize()>0 && againster.getDeck().deckSize()>0 && getPlayedGames()<100){
             //pick the cards for the respective User in their deck
             Card card1 = player.getDeck().drawCardFromDeck();
             cardPicked(player,card1);
