@@ -31,7 +31,6 @@ public class HTTPServer implements Runnable{
     }
 
     public static void main(String[] args){
-        List<String> messages = new ArrayList<>();
         List<User> users  = new ArrayList<>();
         List<String> stack  = new ArrayList<>();
         List<Stack> stacksList = new ArrayList<>();
@@ -107,9 +106,6 @@ public class HTTPServer implements Runnable{
                             //if the user exists take the stack of cards from him and return them as a response
                             boolean userExists = userCheck(user);
                             if (userExists) {
-                                //User usr = new User("arber");
-                                //users.add(user);
-                                //System.out.println("SIze of  user list: "+users.size());
                                 for (int i = 0; i < users.size(); i++) {
                                     if (user.equals(users.get(i).getUsername())) {
                                         User player = users.get(i);
@@ -147,9 +143,6 @@ public class HTTPServer implements Runnable{
                             //if the user exists take the deck of cards from him and return them as a response
                             boolean userExists = userCheck(user);
                             if (userExists) {
-                                //User usr = new User("arber");
-                                //users.add(usr);
-                                //System.out.println("SIze of  user list: "+users.size());
                                 for (int i = 0; i < users.size(); i++) {
                                     if (user.equals(users.get(i).getUsername())) {
                                         User player = users.get(i);
@@ -363,157 +356,22 @@ public class HTTPServer implements Runnable{
                                 for (int i = 0; i < users.size(); i++) {
                                     if (user.equals(users.get(i).getUsername())) {
                                         User player = users.get(i);
-                                        //System.out.println("Player:"+player.getUsername());
-                                        User againster = users.get(i+1);
-                                        battle.startGame(player, againster);
-                                    }
-                                }
-                                info = "Battle started";
-                                //send the respond to the client
-                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, info.getBytes());
-                            }else {
-                                //if user doesnt exist then send a not found message
-                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "User doesn't exists!!".getBytes());
-                            }
-                        }else{
-                            //if the token is null, it means you can show the client anything
-                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
-                        }
-                    }
-                    else if(path.equals("/packages")){
-                        String secureToken = bodySplit[3];
-                        if (secureToken != null) {
-                            //take the username from the token
-                            String[] userSplit = secureToken.split("-");
-                            String user = userSplit[0];
-                            System.out.println("user: "+user);
-                            //if the user exists take the deck of cards from him and return them as a response
-                            boolean userExists = userCheck(user);
-                            System.out.println("does user exist: "+userExists);
-                            if (userExists) {
-                                for (int i = 0; i < users.size(); i++) {
-                                    if (user.equals(users.get(i).getUsername())) {
-                                        User player = users.get(i);
-                                        //buy a package
-                                        //admin -> saves 5 cards in his stack
-                                        player.getStack().buy_packages();
-                                        System.out.println("admin stack size: "+player.getStack().stackSize());
-                                        //add the package to its List
-                                        packages.add(player.getStack());
-                                    }
-                                    System.out.println("Package und length:"+packages.toString()+"|"+packages.size());
-                                }
-                                String info = "Package created";
-                                //send the respond to the client
-                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, info.getBytes());
-                            }else {
-                                //if user doesnt exist then send a not found message
-                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
-                            }
-                        }else{
-                            //if the token is null, it means you can show the client anything
-                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
-                        }
-                    }else if(path.equals("/transactions/packages")){
-                        String secureToken = bodySplit[3];
-                        if (secureToken != null) {
-                            //take the username from the token
-                            String[] userSplit = secureToken.split("-");
-                            String user = userSplit[0];
-                            //if the user exists take the deck of cards from him and return them as a response
-                            boolean userExists = userCheck(user);
-                            if (userExists) {
-                                for (int i = 0; i < users.size(); i++) {
-                                    if (user.equals(users.get(i).getUsername())) {
-                                        User player = users.get(i);
                                         if(player.getCoins()>0){
-                                            if(packages.size()>0){
-                                                //get the first package
-                                                //Stack pkg = packages.get(0);
-                                                //save the package in the players stack
-                                                player.getStack().addPkg(packages.get(0).getStack());
-                                                //remove that package which was taken
-                                                packages.remove(0);
-                                                player.updateCoins();
-                                                System.out.println("player Stack before: "+player.getStack().getStack());
-                                                //System.out.println("stack size of player before: "+player.getStack().stackSize());
-                                                //delete 5 cards that are more than needed in the stack
-                                                if(player.getStack().stackSize() > 5){
-                                                    for (int a = player.getStack().stackSize()-9;a<player.getStack().stackSize();a++){
-                                                        player.getStack().deleteCardsToStack(player.getStack().pickCardFromStack(a));
-                                                    }
-                                                }
-
-                                                //System.out.println("Coins: "+player.getCoins());
-                                                System.out.println("player Stack: "+player.getStack().getStack());
-                                                //System.out.println("stack size of player: "+player.getStack().stackSize());
-
-                                                String info = "Package transfered to the player!!";
-                                                //send the respond to the client
-                                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, info.getBytes());
-                                            }
-                                            else{
-                                                String info = "No packages to buy avaliable!!";
-                                                //send the respond to the client
-                                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, info.getBytes());
-                                            }
-                                        }
-                                        else{
-                                            String info = "No more coins!!";
+                                            //save the package in the players stack
+                                            player.getStack().buy_packages();
+                                            //substract the money from the user
+                                            player.updateCoins();
+                                            info = "Package successfully bought!!";
                                             //send the respond to the client
-                                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, info.getBytes());
-                                        }
-                                    }
-                                }
-                            }else {
-                                //if user doesnt exist then send a not found message
-                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "No User!!".getBytes());
-                            }
-                        }else{
-                            //if the token is null, it means you can show the client anything
-                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, "Token is missing".getBytes());
-                        }
-                    }
-                    else if (path.equals("/battles/1")) {
-                        String info = "";
-                        //take the token
-                        //String secureToken = takeTokenForBattle(in);
-                        String secureToken = bodySplit[2];
-                        //check if the token was send in the request
-                        System.out.println("Token in post: "+secureToken);
-                        if (secureToken != null) {
-                            //take the username from the token
-                            String[] userSplit = secureToken.split("-");
-                            String user = userSplit[0];
-                            //if the user exists take the deck of cards from him and return them as a response
-                            boolean userExists = userCheck(user);
-                            User user1111 = new User("kienboec");
-                            users.add(user1111);
-                            User user1112 = new User("altenhof");
-                            users.add(user1112);
-                            if (userExists) {
-                                for (int i = 0; i < users.size(); i++) {
-                                    if (user.equals(users.get(i).getUsername())) {
-                                        User player = users.get(i);
-                                        if(player.getCoins()>0){
-                                                //get the first package
-                                                //Stack pkg = packages.get(0);
-                                                //save the package in the players stack
-                                                player.getStack().buy_packages();
-                                                //remove that package which was taken
-                                                player.updateCoins();
-
-                                                info = "Package transfered to the player!!";
-                                                //send the respond to the client
-                                                sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, info.getBytes());
+                                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, info.getBytes());
                                         }
                                         else{
                                             info = "No more coins!!";
                                             //send the respond to the client
                                             sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, info.getBytes());
                                         }
-
                                         User againster = users.get(i+1);
+                                        //play the battle
                                         battle.startGame(player, againster);
                                     }
                                 }
