@@ -112,8 +112,8 @@ public class HTTPServer implements Runnable{
                                         //System.out.println("SIze: "+player.getStack().stackSize());
                                         if(player.getStack().stackSize()>0){
                                             for (int j = 0; j < player.getStack().stackSize(); j++) {
-                                                stack.add(player.getStack().pickCardFromStack(i).getName() + ","
-                                                        + player.getStack().pickCardFromStack(i).getDamage() + "," + player.getStack().pickCardFromStack(i).getElement_type());
+                                                stack.add(player.getStack().pickCardFromStack(j).getName() + ","
+                                                        + player.getStack().pickCardFromStack(j).getDamage() + "," + player.getStack().pickCardFromStack(j).getElement_type());
                                             }
                                             allCards = listAllCards(stack);
                                         }else{
@@ -148,6 +148,7 @@ public class HTTPServer implements Runnable{
                                         User player = users.get(i);
                                         //Battlefield battle = new Battlefield();
                                         //battle.createDeck(player);
+                                        System.out.println("Deck size: " +player.getDeck().deckSize());
                                         if(player.getDeck().deckSize()>0){
                                             for (int j = 0; j < player.getDeck().deckSize(); j++) {
                                                 deck.add(player.getDeck().pickCardFromDeck(j).getName()+","
@@ -331,9 +332,7 @@ public class HTTPServer implements Runnable{
                                 //send the respond to the client
                                 String response = "The user doesn't exist!";
                                 sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, response.getBytes());
-
                         }
-
                     }
                     else if (path.equals("/battles")) {
                         String info = "";
@@ -356,20 +355,6 @@ public class HTTPServer implements Runnable{
                                 for (int i = 0; i < users.size(); i++) {
                                     if (user.equals(users.get(i).getUsername())) {
                                         User player = users.get(i);
-                                        if(player.getCoins()>0){
-                                            //save the package in the players stack
-                                            player.getStack().buy_packages();
-                                            //substract the money from the user
-                                            player.updateCoins();
-                                            info = "Package successfully bought!!";
-                                            //send the respond to the client
-                                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(200), version, contentType, info.getBytes());
-                                        }
-                                        else{
-                                            info = "No more coins!!";
-                                            //send the respond to the client
-                                            sendRespond(out, contentSend, ResponseStatusCode.getDesc(404), version, contentType, info.getBytes());
-                                        }
                                         User againster = users.get(i+1);
                                         //play the battle
                                         battle.startGame(player, againster);

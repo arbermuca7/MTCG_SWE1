@@ -35,8 +35,8 @@ public class Stack{
         return stack.size();
     }
 
-    public void buy_packages(){
-        //if(usr.getCoins() > 0){
+    public void buy_packages(User usr){
+        if(usr.getCoins() > 0){
             ArrayList<Card> pkg = new ArrayList<>(5);
             Random rand = new Random();
             //save 5 cards to package List
@@ -84,8 +84,8 @@ public class Stack{
             //add all cards from the package to the stack
             stack.addAll(pkg);
             //update the coins subtracting 4 coins, when you buy a package of cards
-            //usr.updateCoins();
-       // }
+            usr.updateCoins();
+       }
     }
 
 }

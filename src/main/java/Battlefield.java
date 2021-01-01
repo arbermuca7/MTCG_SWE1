@@ -183,14 +183,14 @@ public class Battlefield {
         setUser(player);
         setOpponent(againster);
         //buy a package with cards
-        //player.getStack().buy_packages();
+        player.getStack().buy_packages(player);
         createDeck(player);
         System.out.println("------------------------------------------------------------");
         System.out.println("--> "+player.getUsername()+" bought a card package!!");
         System.out.println("--> His Cards are : "+player.getStack().getStack());
         System.out.println("--> His Deck  is : "+player.getDeck().getDeck());
 
-        againster.getStack().buy_packages();
+        againster.getStack().buy_packages(againster);
         createDeck(againster);
         System.out.println("--> "+againster.getUsername()+" bought a card package!!");
         System.out.println("--> His Cards are : "+againster.getStack().getStack().toString());
