@@ -117,6 +117,14 @@ public class Battlefield {
             int damages = m1.getDamage();
             m1.setDamage(damages);
             setPureMonster(true);
+        }else if(m1.getName().equals(MonsterBreeds.EAGLE.getVal()) && (m2.getName().equals(SpellBreeds.SPELL_WATER.getVal())
+                || m2.getName().equals(SpellBreeds.SPELL_FIRE.getVal()) || m2.getName().equals(SpellBreeds.SPELL_NONE.getVal())
+                || m2.getName().equals(MonsterBreeds.DRAGON.getVal()) || m2.getName().equals(MonsterBreeds.GOBLIN.getVal())
+                || m2.getName().equals(MonsterBreeds.WIZARD.getVal()) || m2.getName().equals(MonsterBreeds.ORK.getVal())
+                || m2.getName().equals(MonsterBreeds.KNIGHT.getVal()) || m2.getName().equals(MonsterBreeds.KRAKEN.getVal())
+                || m2.getName().equals(MonsterBreeds.FIREELVES.getVal()))){
+            m2.setDamage(0);
+            setPureMonster(true);
         }
         else if(m2.getName().equals(MonsterBreeds.GOBLIN.getVal()) && m1.getName().equals(MonsterBreeds.DRAGON.getVal())){
             m2.setDamage(0);
@@ -138,6 +146,14 @@ public class Battlefield {
         else if(m2.getName().equals(MonsterBreeds.FIREELVES.getVal()) && m1.getName().equals(MonsterBreeds.DRAGON.getVal())){
             int damages = m1.getDamage();
             m2.setDamage(damages);
+            setPureMonster(true);
+        }else if(m2.getName().equals(MonsterBreeds.EAGLE.getVal()) && (m1.getName().equals(SpellBreeds.SPELL_WATER.getVal())
+                || m1.getName().equals(SpellBreeds.SPELL_FIRE.getVal()) || m1.getName().equals(SpellBreeds.SPELL_NONE.getVal())
+                || m1.getName().equals(MonsterBreeds.DRAGON.getVal()) || m1.getName().equals(MonsterBreeds.GOBLIN.getVal())
+                || m1.getName().equals(MonsterBreeds.WIZARD.getVal()) || m1.getName().equals(MonsterBreeds.ORK.getVal())
+                || m1.getName().equals(MonsterBreeds.KNIGHT.getVal()) || m1.getName().equals(MonsterBreeds.KRAKEN.getVal())
+                || m1.getName().equals(MonsterBreeds.FIREELVES.getVal()))){
+            m1.setDamage(0);
             setPureMonster(true);
         }
         else {

@@ -8,7 +8,8 @@ public enum MonsterBreeds {
     ORK("ORK"),
     KNIGHT("KNIGHT"),
     KRAKEN("KRAKEN"),
-    FIREELVES("FIREELVES");
+    FIREELVES("FIREELVES"),
+    EAGLE("EAGLE");
 
     String monster;
 

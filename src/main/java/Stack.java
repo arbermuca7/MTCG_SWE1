@@ -45,7 +45,7 @@ public class Stack{
                 //first if it comes 1 save a monster and if its a monster save a random one from MonsterBreeds
                 if (whichOne == 1){
                     Random randMonster = new Random();
-                    int whichMonster = randMonster.nextInt(7);
+                    int whichMonster = randMonster.nextInt(8);
                     //a variable that takes a random damage of the card
                     //range [60,2000] --> rand((2000-60)+1)+60
                     int damageMonster = randMonster.nextInt(1941)+60;
@@ -54,6 +54,9 @@ public class Stack{
                     //if the monster Fire elves is then we can define the element before and it is fire
                     if (MonsterBreeds.getMonster(whichMonster).equals(MonsterBreeds.FIREELVES.getVal())){
                         Card monster = new Monster(MonsterBreeds.FIREELVES.getVal(),damageMonster,Elements.FIRE);
+                        pkg.add(monster);
+                    }else if (MonsterBreeds.getMonster(whichMonster).equals(MonsterBreeds.EAGLE.getVal())){
+                        Card monster = new Monster(MonsterBreeds.EAGLE.getVal(),damageMonster,Elements.FIRE);
                         pkg.add(monster);
                     }else{
                         //if the monster is not a fire elves, then we can define by random what element type should he get
