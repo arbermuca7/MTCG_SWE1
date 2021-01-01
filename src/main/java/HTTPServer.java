@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.crypto.AEADBadTagException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -109,15 +110,33 @@ public class HTTPServer implements Runnable{
                                 for (int i = 0; i < users.size(); i++) {
                                     if (user.equals(users.get(i).getUsername())) {
                                         User player = users.get(i);
-                                        //System.out.println("SIze: "+player.getStack().stackSize());
-                                        if(player.getStack().stackSize()>0){
-                                            for (int j = 0; j < player.getStack().stackSize(); j++) {
-                                                stack.add(player.getStack().pickCardFromStack(j).getName() + ","
-                                                        + player.getStack().pickCardFromStack(j).getDamage() + "," + player.getStack().pickCardFromStack(j).getElement_type());
+                                        //System.out.println("Size: "+player.getStack().stackSize());
+                                        if(stack.size()==0){
+                                            if (player.getStack().stackSize() > 0) {
+                                                for (int j = 0; j < player.getStack().stackSize(); j++) {
+                                                    stack.add(player.getStack().pickCardFromStack(j).getName() + ","
+                                                            + player.getStack().pickCardFromStack(j).getDamage() + "," + player.getStack().pickCardFromStack(j).getElement_type());
+                                                }
+                                                allCards = listAllCards(stack);
+                                            } else {
+                                                allCards = "No Cards in Stack yet!!";
                                             }
-                                            allCards = listAllCards(stack);
+                                        }else if(stack.size()>4){
+                                            //take for the next user
+                                            if (player.getStack().stackSize() > 0) {
+                                                for (int j = 0; j < player.getStack().stackSize(); j++) {
+                                                    stack.add(player.getStack().pickCardFromStack(j).getName() + ","
+                                                            + player.getStack().pickCardFromStack(j).getDamage() + "," + player.getStack().pickCardFromStack(j).getElement_type());
+                                                }
+                                            }
+                                            List<String> secondUser = new ArrayList<>();
+                                            for(int a=stack.size()-5; a<stack.size(); a++){
+                                                secondUser.add(stack.get(a));
+                                            }
+                                            System.out.println("Liste:"+secondUser);
+                                            allCards = listAllCardsDeck(secondUser);
                                         }else{
-                                            allCards = "No Cards in Stack yet!!";
+                                            allCards = listAllCards(stack);
                                         }
                                     }
                                 }
@@ -149,14 +168,21 @@ public class HTTPServer implements Runnable{
                                         //Battlefield battle = new Battlefield();
                                         //battle.createDeck(player);
                                         System.out.println("Deck size: " +player.getDeck().deckSize());
-                                        if(player.getDeck().deckSize()>0){
-                                            for (int j = 0; j < player.getDeck().deckSize(); j++) {
-                                                deck.add(player.getDeck().pickCardFromDeck(j).getName()+","
-                                                        +player.getDeck().pickCardFromDeck(j).getDamage()+","+player.getDeck().pickCardFromDeck(j).getElement_type());
-                                            }
-                                            allCards = listAllCards(deck);
-                                        }else{
+                                        if(player.getDeck().deckSize()==0){
                                             allCards = "The deck is not created yet!!";
+                                        }
+                                        if(deck.size()==0){
+                                            if(player.getDeck().deckSize()>0 && battle.getWinner().getUsername().equals(user)){
+                                                for (int j = 0; j < player.getDeck().deckSize(); j++) {
+                                                    deck.add(player.getDeck().pickCardFromDeck(j).getName()+","
+                                                            +player.getDeck().pickCardFromDeck(j).getDamage()+","+player.getDeck().pickCardFromDeck(j).getElement_type());
+                                                }
+                                                allCards = listAllCards(deck);
+                                            }else{
+                                                allCards = "The deck is not created yet!!";
+                                            }
+                                        }else{
+                                            allCards = player.getUsername()+" lost and there are no more cards on deck!!";
                                         }
                                     }
                                 }
@@ -515,12 +541,22 @@ public class HTTPServer implements Runnable{
     public static String listAllCards(List<String> crd){
         int i = 0;
         StringBuilder msgBuilder = new StringBuilder();
-        msgBuilder.append("Stack of Cards:\n");
+        msgBuilder.append("List of Cards:\n");
         while (i < crd.size() - 1) {
             msgBuilder.append(crd.get(i)+"\n");
             i++;
         }
         msgBuilder.append(crd.get(i));
+        return msgBuilder.toString();
+    }
+    public static String listAllCardsDeck(List<String> crd){
+        int i = 0;
+        StringBuilder msgBuilder = new StringBuilder();
+        msgBuilder.append("List of Cards:\n");
+        while (i < crd.size()) {
+            msgBuilder.append(crd.get(i)+"\n");
+            i++;
+        }
         return msgBuilder.toString();
     }
     private static void sendRespond(PrintWriter out,BufferedOutputStream contentSend, String status, String version, String contentTyp, byte[] content) throws IOException {

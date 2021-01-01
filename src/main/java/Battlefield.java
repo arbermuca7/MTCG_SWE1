@@ -206,11 +206,20 @@ public class Battlefield {
         System.out.println("--> His Cards are : "+player.getStack().getStack());
         System.out.println("--> His Deck  is : "+player.getDeck().getDeck());
 
+        for (int i = 0; i< player.getDeck().deckSize();i++){
+            System.out.println("--> His Deck  is : "+player.getDeck().pickCardFromDeck(i).getName()+","
+                    +player.getDeck().pickCardFromDeck(i).getDamage()+","+player.getDeck().pickCardFromDeck(i).getElement_type());
+        }
+
         againster.getStack().buy_packages(againster);
         createDeck(againster);
         System.out.println("--> "+againster.getUsername()+" bought a card package!!");
         System.out.println("--> His Cards are : "+againster.getStack().getStack().toString());
         System.out.println("--> His Deck  is : "+againster.getDeck().getDeck().toString());
+        for (int i = 0; i< againster.getDeck().deckSize();i++){
+            System.out.println("--> His Deck  is : "+againster.getDeck().pickCardFromDeck(i).getName()+","
+                    +againster.getDeck().pickCardFromDeck(i).getDamage()+","+againster.getDeck().pickCardFromDeck(i).getElement_type());
+        }
         System.out.println("------------------------------------------------------------");
         //as long that no more card are in the deck or the rounds are > 100 then stop the game
         int counter = 0;
