@@ -1,7 +1,6 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.crypto.AEADBadTagException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -734,21 +733,6 @@ public class HTTPServer implements Runnable{
             System.out.println("User \""+usr.getUsername()+"\" was successfully deleted");
         }
 
-    }
-
-    public boolean tokenCheck(String token, User user){
-        //check if the token that came is same as the one that the user should have
-        // if its true then the other operations can be fulfilled
-        String checkToken = user.getUsername()+"-mctgToken";
-        if(token.equals(checkToken)){
-            return true;
-        }
-        return false;
-    }
-
-    public String createToken(String usr){
-        String token = usr+"-mtcgToken";
-        return token;
     }
     public boolean userCheck(String user) throws SQLException{
         //check if a user with this name in the db exists
