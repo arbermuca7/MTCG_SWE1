@@ -652,28 +652,6 @@ public class HTTPServer implements Runnable{
         return bodyContent+"/"+contentType+"/"+token;
     }
 
-    public static String takeTokenForBattle(BufferedReader in) throws IOException {
-        //take the other part of the header + the body
-        StringBuilder requestBody = new StringBuilder();
-        //divide every field of the header and the last part(the body) with a newline
-        while (in.ready()) {
-            char line = (char) in.read();
-            requestBody.append(line);
-        }
-        String body = requestBody.toString();
-        String[] requestLines = body.split("\r\n");
-        System.out.println("Length2: "+requestLines.length);
-        for(int i = 0 ; i < requestLines.length; i++){
-            System.out.println("show2: "+requestLines[i]);
-        }
-        String[] requestToken = requestLines[3].split(" ");
-        //take the token
-        String token = requestToken[2];
-        System.out.println("token2: "+token);
-
-        return token;
-    }
-
     public void openConnection(String url, String user, String password) throws SQLException {
         connection = DriverManager.getConnection(url, user, password);
     }
