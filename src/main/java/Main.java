@@ -5,16 +5,17 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws SQLException {
 
-           User usr = new User("Arber Muca");
-           User opponent = new User("Norbert Niemand");
-           Battlefield battle = new Battlefield();
-           // battle.startGame(usr,opponent);
-        Card crd = new Monster("hello",1222,Elements.FIRE);
-        Card user = new Monster("hello",1222,Elements.FIRE);;
-        if (!crd.getElement_type().equals(user.getElement_type())){
-            System.out.println("yes");
-        }else
-            System.out.println("no");
+       User usr = new User("Arber Muca");
+       User opponent = new User("Norbert Niemand");
+       Battlefield battle = new Battlefield();
+       battle.startGame(usr,opponent);
+
+        //Card crd = new Monster("hello",1222,Elements.FIRE);
+        //Card user = new Monster("hello",1222,Elements.FIRE);
+        //if (!crd.getElement_type().equals(user.getElement_type())){
+        //    System.out.println("yes");
+        //}else
+        //System.out.println("no");
 
        /*Scanner sc = new Scanner(System.in);
        User usr = new User("kienboeck","daniel");

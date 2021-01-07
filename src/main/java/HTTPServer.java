@@ -599,7 +599,6 @@ public class HTTPServer implements Runnable{
             requestBody.append(line);
         }
         String body = requestBody.toString();
-        System.out.println("HEADER full:\n"+body);
         String[] requestLines = body.split("\r\n");
         //split the line of the content type if you use postman where a space is
         String[] requestLine = requestLines[0].split(" ");
@@ -638,16 +637,11 @@ public class HTTPServer implements Runnable{
             String header = requestLines[i];
             _headers.add(header);
         }
-
-        System.out.println("token: "+token);
-        System.out.println("content type: "+contentType);
-        System.out.println("HEADER:"+_headers);
         String bodyContent = null;
         //save the body into a string
         if (!_headers.isEmpty()) {
             bodyContent = _headers.get(_headers.size() - 1);
         }
-        System.out.println("body: "+bodyContent);
         return bodyContent+"/"+contentType+"/"+token;
     }
 
